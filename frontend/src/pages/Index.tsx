@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const Index = () => {
   const navigate = useNavigate();
   const [isSolutionPageOpen, setIsSolutionPageOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState("detection");
   
   // Mock data for disease detection
   const mockDiseaseData = {
@@ -55,20 +56,12 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Agricultural Community Support Platform</p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              className="gap-2"
-              onClick={() => navigate("/crop-scan")}
-            >
-              <Camera className="h-4 w-4" />
-              Scan Crop
-            </Button>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="detection" className="w-full">
+        <Tabs defaultValue="detection" className="w-full" onValueChange={setCurrentTab}>
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
             <TabsTrigger value="detection" className="gap-2">
               <Sprout className="h-4 w-4" />
@@ -135,14 +128,28 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Floating Action Button - Solve This */}
+      {/* Floating Action Buttons */}
+      
+      {/* Solve This FAB - Hidden on Community Dashboard */}
+      {currentTab !== "community" && (
+        <Button
+          size="lg"
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 h-16 px-8 rounded-full shadow-lg gap-2 z-50 transition-transform active:scale-110 duration-120"
+          onClick={() => setIsSolutionPageOpen(true)}
+        >
+          <Lightbulb className="h-6 w-6" />
+          Solve this
+        </Button>
+      )}
+
+      {/* Scan Crop FAB */}
       <Button
         size="lg"
-        className="fixed bottom-8 right-8 h-14 px-6 rounded-full shadow-lg gap-2 z-50"
-        onClick={() => setIsSolutionPageOpen(true)}
+        className="fixed bottom-8 right-8 h-16 px-8 rounded-full shadow-lg gap-2 z-50 transition-transform active:scale-110 duration-120"
+        onClick={() => navigate("/crop-scan")}
       >
-        <Lightbulb className="h-5 w-5" />
-        Solve this
+        <Camera className="h-6 w-6" />
+        Scan Crop
       </Button>
 
       {/* Solution Page Modal */}

@@ -12,6 +12,8 @@ export default function CropScan() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [description, setDescription] = useState("");
+  const [cropName, setCropName] = useState("");
+  const [language, setLanguage] = useState("en");
   const [isRecording, setIsRecording] = useState(false);
   const [voiceFile, setVoiceFile] = useState<Blob | null>(null);
   const [transcription, setTranscription] = useState("");
@@ -70,10 +72,10 @@ export default function CropScan() {
   };
 
   const handleSubmit = async () => {
-    if (!imageFile) {
+    if (!imageFile || !cropName || !description) {
       toast({
-        title: "Image required",
-        description: "Please add a photo of your crop",
+        title: "Missing information",
+        description: "Please add an image, crop name, and description",
         variant: "destructive",
       });
       return;
@@ -82,12 +84,14 @@ export default function CropScan() {
     setIsSubmitting(true);
     
     // Call placeholder function for backend integration
+    // Payload structure: { scanId, imageUrl, cropName, description, voiceFileMeta: { filename, language } }
     try {
       await onSendForDetection({
         image: imageFile,
+        cropName,
         description,
         voiceFile,
-        transcription,
+        language,
       });
       
       toast({
@@ -200,9 +204,21 @@ export default function CropScan() {
                   Brief Description
                 </label>
                 <Input
-                  placeholder="Type a brief description of the problem..."
+                  placeholder="Describe the problem in one line..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              {/* Crop Name Input */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Crop Name
+                </label>
+                <Input
+                  placeholder="e.g., Groundnut / Cotton / Mango"
+                  value={cropName}
+                  onChange={(e) => setCropName(e.target.value)}
                 />
               </div>
 
@@ -215,7 +231,7 @@ export default function CropScan() {
                   <Button
                     variant={isRecording ? "destructive" : "secondary"}
                     onClick={handleVoiceRecord}
-                    className="gap-2 flex-1"
+                    className={`gap-2 flex-1 ${isRecording ? 'animate-pulse' : ''}`}
                   >
                     <Mic className="h-4 w-4" />
                     {isRecording ? "Stop Recording" : "Record voice (your language)"}
@@ -248,7 +264,7 @@ export default function CropScan() {
               <Button
                 className="w-full gap-2"
                 onClick={handleSubmit}
-                disabled={!imageFile || isSubmitting}
+                disabled={!imageFile || !cropName || !description || isSubmitting}
               >
                 {isSubmitting ? (
                   <>

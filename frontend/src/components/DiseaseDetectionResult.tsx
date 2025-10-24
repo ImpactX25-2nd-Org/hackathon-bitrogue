@@ -4,8 +4,9 @@ import { CommunityAdviceCard } from "./CommunityAdviceCard";
 import { Button } from "@/components/ui/button";
 import { Share2, AlertTriangle, Volume2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { playTranslatedMessage } from "@/lib/api-placeholders";
+import { playTranslatedMessage, shareToCommunity } from "@/lib/api-placeholders";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface DiseaseDetectionResultProps {
   diseaseName: string;
@@ -30,6 +31,8 @@ export const DiseaseDetectionResult = ({
   communityAdvice,
   isCommon,
 }: DiseaseDetectionResultProps) => {
+  const [isSharing, setIsSharing] = useState(false);
+
   const handlePlayMessage = async () => {
     try {
       const result = await playTranslatedMessage("mock_scan_id");
@@ -47,6 +50,35 @@ export const DiseaseDetectionResult = ({
     }
   };
 
+  const handleShareToCommunity = async () => {
+    setIsSharing(true);
+    try {
+      // Call placeholder function with prefill data
+      // In production, this will come from the scan context
+      await shareToCommunity({
+        cropName: "Mock Crop", // Will come from scan data
+        description: diseaseName,
+        image: "/placeholder.svg", // Will come from scan data
+      });
+
+      toast({
+        title: "Shared to community",
+        description: "Your post has been created in the community dashboard",
+      });
+
+      // Navigate to community dashboard (will be implemented with router)
+      console.log("Navigate to community dashboard with new post");
+    } catch (error) {
+      toast({
+        title: "Share failed",
+        description: "Could not share to community. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card className="border-2 border-primary">
@@ -56,7 +88,13 @@ export const DiseaseDetectionResult = ({
               <CardTitle className="text-2xl text-foreground">{diseaseName}</CardTitle>
               <ReliabilityIndicator percentage={reliability} />
             </div>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2"
+              onClick={handleShareToCommunity}
+              disabled={isSharing}
+            >
               <Share2 className="h-4 w-4" />
               Share to Community
             </Button>
@@ -89,8 +127,11 @@ export const DiseaseDetectionResult = ({
         </CardContent>
       </Card>
 
-      {isCommon && communityAdvice && communityAdvice.length > 0 && (
-        <div className="space-y-4">
+      {/* Community Advice - Only show if reliability <= 25% */}
+      {isCommon && communityAdvice && communityAdvice.length > 0 && reliability <= 25 && (
+        <div 
+          className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-250"
+        >
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-semibold text-foreground">Community Advice</h3>
             <span className="text-sm text-muted-foreground">

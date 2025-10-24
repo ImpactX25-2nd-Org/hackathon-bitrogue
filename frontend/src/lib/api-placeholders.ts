@@ -9,10 +9,16 @@
 // Types for better developer experience
 export interface ScanPayload {
   image: File;
+  cropName: string;
   description: string;
   voiceFile: Blob | null;
-  transcription: string;
-  language?: string; // Language code (e.g., 'mr', 'hi', 'kn')
+  language?: string; // Language code (e.g., 'mr', 'hi', 'kn', 'en')
+}
+
+export interface CommunityPrefill {
+  image?: File | string;
+  cropName?: string;
+  description?: string;
 }
 
 export interface DetectionResult {
@@ -39,7 +45,7 @@ export interface Suggestion {
  * Send crop image and description for disease detection
  * 
  * Backend should:
- * - Accept multipart/form-data with image, text, and optional voice file
+ * - Accept multipart/form-data with image, cropName, description, and optional voice file
  * - Process image through ML model
  * - Convert voice to text and translate to English if needed
  * - Return detection result with scanId
@@ -49,9 +55,9 @@ export interface Suggestion {
  * Request format:
  * {
  *   image: File,
+ *   cropName: string,
  *   description: string,
  *   voiceFile?: Blob,
- *   transcription?: string,
  *   language?: string
  * }
  * 
@@ -61,13 +67,23 @@ export interface Suggestion {
  *   status: 'processing' | 'completed',
  *   estimatedTime?: number
  * }
+ * 
+ * Sample payload comment:
+ * {
+ *   scanId: "scan_12345",
+ *   imageUrl: "https://...",
+ *   cropName: "Groundnut",
+ *   description: "Yellow spots on leaves",
+ *   voiceFileMeta: { filename: "recording.webm", language: "mr" }
+ * }
  */
 export const onSendForDetection = async (payload: ScanPayload): Promise<{ scanId: string }> => {
   console.log('[PLACEHOLDER] onSendForDetection called with:', {
     imageSize: payload.image.size,
+    cropName: payload.cropName,
     description: payload.description,
     hasVoice: !!payload.voiceFile,
-    transcription: payload.transcription,
+    language: payload.language,
   });
 
   // Simulate API call delay
@@ -228,4 +244,62 @@ export const fetchUpdatedTrustScores = async (): Promise<any> => {
     farmers: [],
     lastUpdate: new Date().toISOString(),
   };
+};
+
+/**
+ * Share detection result to community dashboard
+ * 
+ * Backend should:
+ * - Create a new community post with prefilled data
+ * - Associate post with the detection result
+ * - Redirect user to community dashboard with new post
+ * 
+ * Example endpoint: POST /api/community/share
+ * 
+ * Request format:
+ * {
+ *   scanId?: string,
+ *   image: File | string,
+ *   cropName: string,
+ *   description: string
+ * }
+ * 
+ * Response format:
+ * {
+ *   postId: string,
+ *   success: boolean
+ * }
+ */
+export const shareToCommunity = async (prefill: CommunityPrefill): Promise<{ postId: string; success: boolean }> => {
+  console.log('[PLACEHOLDER] shareToCommunity called with:', prefill);
+
+  await new Promise(resolve => setTimeout(resolve, 800));
+
+  return {
+    postId: `post_${Date.now()}`,
+    success: true,
+  };
+};
+
+/**
+ * Open new post modal/form with prefilled data
+ * 
+ * Frontend function to open community post creation with prefilled fields.
+ * This is typically called when sharing from disease detection or other sources.
+ * 
+ * Prefill structure:
+ * {
+ *   image?: File | string,
+ *   cropName?: string,
+ *   description?: string
+ * }
+ */
+export const openNewPostWithPrefill = (prefill: CommunityPrefill): void => {
+  console.log('[PLACEHOLDER] openNewPostWithPrefill called with:', prefill);
+  
+  // Frontend implementation will:
+  // 1. Store prefill data in state/context
+  // 2. Open the new post modal/form
+  // 3. Populate form fields with prefill data
+  // 4. Allow user to edit/submit
 };

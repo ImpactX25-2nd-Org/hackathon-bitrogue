@@ -3,6 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search } from "lucide-react";
+import { openNewPostWithPrefill } from "@/lib/api-placeholders";
+import { useState } from "react";
+
+interface CommunityDashboardProps {
+  prefillData?: {
+    image?: File | string;
+    cropName?: string;
+    description?: string;
+  };
+}
 
 const mockPosts = [
   {
@@ -42,7 +52,20 @@ const mockPosts = [
   },
 ];
 
-export const CommunityDashboard = () => {
+export const CommunityDashboard = ({ prefillData }: CommunityDashboardProps = {}) => {
+  const [newPostPrefill, setNewPostPrefill] = useState(prefillData);
+
+  const handleNewPost = () => {
+    // Call placeholder function to open new post modal with prefill
+    openNewPostWithPrefill(newPostPrefill || {});
+    
+    // In production, this will:
+    // 1. Open a modal/drawer with a post creation form
+    // 2. Prefill the form with image, cropName, description if provided
+    // 3. Allow user to edit and submit
+    console.log("Opening new post with prefill:", newPostPrefill);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -50,7 +73,10 @@ export const CommunityDashboard = () => {
           <h2 className="text-3xl font-bold text-foreground mb-2">Community Dashboard</h2>
           <p className="text-muted-foreground">Connect with fellow farmers and share knowledge</p>
         </div>
-        <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button 
+          className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+          onClick={handleNewPost}
+        >
           <Plus className="h-4 w-4" />
           New Post
         </Button>
