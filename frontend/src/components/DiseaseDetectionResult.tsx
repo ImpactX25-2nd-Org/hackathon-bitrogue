@@ -127,8 +127,8 @@ export const DiseaseDetectionResult = ({
         </CardContent>
       </Card>
 
-      {/* Community Advice - Only show if reliability <= 25% */}
-      {isCommon && communityAdvice && communityAdvice.length > 0 && reliability <= 25 && (
+      {/* Community Advice - Always show below ML result */}
+      {isCommon && communityAdvice && communityAdvice.length > 0 && (
         <div 
           className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-250"
         >
@@ -137,6 +137,12 @@ export const DiseaseDetectionResult = ({
             <span className="text-sm text-muted-foreground">
               ({communityAdvice.length} farmers shared their experience)
             </span>
+            {/* Show warning badge if low confidence */}
+            {reliability <= 25 && (
+              <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">
+                Low Confidence - Community Input Recommended
+              </span>
+            )}
           </div>
           <div className="space-y-4">
             {communityAdvice.map((advice, index) => (
