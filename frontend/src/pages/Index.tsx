@@ -4,13 +4,46 @@ import { DiseaseDetectionResult } from "@/components/DiseaseDetectionResult";
 import { CommunityDashboard } from "@/components/CommunityDashboard";
 import { SolutionPage } from "@/components/SolutionPage";
 import { Button } from "@/components/ui/button";
-import { Sprout, Users, Lightbulb, Camera } from "lucide-react";
+import { Sprout, Users, Lightbulb, Camera, HelpCircle, LogOut, Globe, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
+import { useLanguage, languages } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const navigate = useNavigate();
   const [isSolutionPageOpen, setIsSolutionPageOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("detection");
+  const { currentLanguage, setLanguage } = useLanguage();
+
+  const handleLanguageChange = (language: string) => {
+    setLanguage(language);
+    toast({
+      title: "Language updated",
+      description: `Switched to ${languages.find(l => l.code === language)?.name}`,
+    });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userData");
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    navigate("/");
+  };
   
   // Mock data for disease detection
   const mockDiseaseData = {
@@ -52,9 +85,52 @@ const Index = () => {
             <div className="flex items-center gap-3">
               <Sprout className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="text-3xl font-bold text-foreground">FarmConnect</h1>
+                <h1 className="text-3xl font-bold text-foreground">KrishiLok</h1>
                 <p className="text-sm text-muted-foreground">Agricultural Community Support Platform</p>
               </div>
+            </div>
+            
+            {/* Language Selector, Back to Login, and Logout */}
+            <div className="flex items-center gap-3">
+              <Select value={currentLanguage} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-[160px]">
+                  <Globe className="h-4 w-4 mr-2 text-primary" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {languages.map((lang) => (
+                    <SelectItem key={lang.code} value={lang.code}>
+                      <span className="font-medium">{lang.nativeName}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/login")}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Login
+              </Button>
+              
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleLogout}
+                    className="rounded-full"
+                  >
+                    <LogOut className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Logout</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -75,12 +151,52 @@ const Index = () => {
           
           <TabsContent value="detection" className="mt-0">
             <div className="max-w-4xl mx-auto">
+              {/* Know More Icon - Top Left */}
+              <div className="flex items-center justify-between mb-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-16 w-16 rounded-full hover:bg-primary/10"
+                      onClick={() => navigate("/documentation")}
+                    >
+                      <HelpCircle className="h-12 w-12 text-primary stroke-[3]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Know More</p>
+                  </TooltipContent>
+                </Tooltip>
+                <div className="flex-1"></div>
+              </div>
+              
               <DiseaseDetectionResult {...mockDiseaseData} />
             </div>
           </TabsContent>
           
           <TabsContent value="community" className="mt-0">
             <div className="max-w-5xl mx-auto">
+              {/* Know More Icon - Top Left */}
+              <div className="flex items-center justify-between mb-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-16 w-16 rounded-full hover:bg-primary/10"
+                      onClick={() => navigate("/documentation")}
+                    >
+                      <HelpCircle className="h-12 w-12 text-primary stroke-[3]" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Know More</p>
+                  </TooltipContent>
+                </Tooltip>
+                <div className="flex-1"></div>
+              </div>
+              
               <CommunityDashboard />
             </div>
           </TabsContent>

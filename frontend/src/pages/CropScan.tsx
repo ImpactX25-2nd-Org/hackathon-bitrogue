@@ -6,14 +6,15 @@ import { Sprout, Camera, Upload, Mic, Play, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { onSendForDetection } from "@/lib/api-placeholders";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function CropScan() {
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [description, setDescription] = useState("");
   const [cropName, setCropName] = useState("");
-  const [language, setLanguage] = useState("en");
   const [isRecording, setIsRecording] = useState(false);
   const [voiceFile, setVoiceFile] = useState<Blob | null>(null);
   const [transcription, setTranscription] = useState("");
@@ -91,7 +92,7 @@ export default function CropScan() {
         cropName,
         description,
         voiceFile,
-        language,
+        language: currentLanguage,
       });
       
       toast({
@@ -102,7 +103,7 @@ export default function CropScan() {
       // Navigate to detection page (simulated)
       setTimeout(() => {
         setIsSubmitting(false);
-        navigate("/");
+        navigate("/dashboard");
       }, 2000);
     } catch (error) {
       setIsSubmitting(false);

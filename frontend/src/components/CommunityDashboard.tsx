@@ -3,15 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search } from "lucide-react";
-import { openNewPostWithPrefill } from "@/lib/api-placeholders";
 import { useState } from "react";
+import { openNewPostWithPrefill } from "@/lib/api-placeholders";
+import type { CommunityPrefill } from "@/lib/api-placeholders";
 
 interface CommunityDashboardProps {
-  prefillData?: {
-    image?: File | string;
-    cropName?: string;
-    description?: string;
-  };
+  prefillData?: CommunityPrefill;
 }
 
 const mockPosts = [
