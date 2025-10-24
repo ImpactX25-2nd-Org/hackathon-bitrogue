@@ -8,106 +8,109 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Farm-themed color palette */
-    --background: 45 30% 96%;
-    --foreground: 150 20% 15%;
+    --background: 45 20% 97%;
+    --foreground: 140 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 20% 15%;
+    --card-foreground: 140 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 20% 15%;
+    --popover-foreground: 140 30% 15%;
 
-    --primary: 150 60% 35%;
+    --primary: 140 60% 35%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 150 50% 45%;
 
-    --secondary: 45 95% 55%;
-    --secondary-foreground: 150 20% 15%;
+    --secondary: 32 95% 55%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 45 20% 85%;
-    --muted-foreground: 150 15% 40%;
+    --muted: 140 20% 93%;
+    --muted-foreground: 140 15% 45%;
 
-    --accent: 25 45% 45%;
+    --accent: 200 60% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 150 70% 40%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 45 20% 88%;
-    --input: 45 20% 88%;
-    --ring: 150 60% 35%;
+    --success: 140 70% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 32 95% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 200 60% 50%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 140 20% 88%;
+    --input: 140 20% 88%;
+    --ring: 140 60% 35%;
 
     --radius: 0.75rem;
-    
-    /* Custom design tokens */
-    --trust-beginner: 150 40% 50%;
-    --trust-reliable: 150 60% 40%;
-    --trust-expert: 45 90% 50%;
-    
-    /* Gradients */
-    --gradient-farm: linear-gradient(135deg, hsl(150 60% 35%), hsl(150 50% 45%));
-    --gradient-harvest: linear-gradient(135deg, hsl(45 95% 55%), hsl(45 85% 65%));
-    
-    /* Shadows */
-    --shadow-card: 0 2px 8px hsl(150 20% 15% / 0.08);
-    --shadow-elevated: 0 4px 16px hsl(150 20% 15% / 0.12);
-    
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --trust-high: 140 70% 45%;
+    --trust-medium: 32 95% 55%;
+    --trust-low: 0 72% 51%;
+
+    --reliability-high: 140 70% 45%;
+    --reliability-medium: 80 70% 55%;
+    --reliability-low: 0 72% 51%;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 150 20% 8%;
-    --foreground: 45 30% 95%;
+    --background: 140 25% 8%;
+    --foreground: 140 10% 92%;
 
-    --card: 150 15% 12%;
-    --card-foreground: 45 30% 95%;
+    --card: 140 20% 12%;
+    --card-foreground: 140 10% 92%;
 
-    --popover: 150 15% 12%;
-    --popover-foreground: 45 30% 95%;
+    --popover: 140 20% 12%;
+    --popover-foreground: 140 10% 92%;
 
-    --primary: 150 50% 45%;
+    --primary: 140 60% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-light: 150 45% 55%;
 
-    --secondary: 45 85% 50%;
-    --secondary-foreground: 150 20% 15%;
+    --secondary: 32 90% 50%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 150 10% 20%;
-    --muted-foreground: 45 20% 65%;
+    --muted: 140 15% 20%;
+    --muted-foreground: 140 10% 60%;
 
-    --accent: 25 40% 50%;
+    --accent: 200 55% 45%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 150 60% 45%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 50%;
+    --destructive: 0 65% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 10% 25%;
-    --input: 150 10% 25%;
-    --ring: 150 50% 45%;
+    --success: 140 65% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 32 90% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 200 55% 45%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 140 15% 20%;
+    --input: 140 15% 20%;
+    --ring: 140 60% 45%;
+
+    --trust-high: 140 65% 40%;
+    --trust-medium: 32 90% 50%;
+    --trust-low: 0 65% 45%;
+
+    --reliability-high: 140 65% 40%;
+    --reliability-medium: 80 65% 50%;
+    --reliability-low: 0 65% 45%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

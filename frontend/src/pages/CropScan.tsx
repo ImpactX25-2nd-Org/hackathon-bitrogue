@@ -1,0 +1,268 @@
+import { useState, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Sprout, Camera, Upload, Mic, Play, Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { onSendForDetection } from "@/lib/api-placeholders";
+import { useNavigate } from "react-router-dom";
+
+export default function CropScan() {
+  const navigate = useNavigate();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [description, setDescription] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
+  const [voiceFile, setVoiceFile] = useState<Blob | null>(null);
+  const [transcription, setTranscription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVoiceRecord = () => {
+    if (isRecording) {
+      setIsRecording(false);
+      // Simulate voice recording completion (frontend only)
+      const mockBlob = new Blob(["mock audio data"], { type: "audio/webm" });
+      setVoiceFile(mockBlob);
+      setTranscription("Mock transcription: My tomato plants have brown spots on leaves");
+      toast({
+        title: "Recording completed",
+        description: "Voice will be auto-translated to English (backend)",
+      });
+    } else {
+      setIsRecording(true);
+      toast({
+        title: "Recording started",
+        description: "Hold to record your message",
+      });
+    }
+  };
+
+  const handlePlayVoice = () => {
+    if (voiceFile) {
+      toast({
+        title: "Playing recording",
+        description: "Audio playback (frontend only)",
+      });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!imageFile) {
+      toast({
+        title: "Image required",
+        description: "Please add a photo of your crop",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Call placeholder function for backend integration
+    try {
+      await onSendForDetection({
+        image: imageFile,
+        description,
+        voiceFile,
+        transcription,
+      });
+      
+      toast({
+        title: "Scan submitted successfully",
+        description: "Analyzing your crop image...",
+      });
+      
+      // Navigate to detection page (simulated)
+      setTimeout(() => {
+        setIsSubmitting(false);
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      setIsSubmitting(false);
+      toast({
+        title: "Submission pending",
+        description: "Backend integration required",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-3">
+            <Sprout className="h-8 w-8 text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Crop Scan</h1>
+              <p className="text-sm text-muted-foreground">Upload and analyze your crop</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-foreground">Scan Your Crop</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Image Upload Area */}
+              <div
+                className="border-2 border-dashed border-border rounded-lg p-8 text-center transition-colors hover:border-primary"
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                {imagePreview ? (
+                  <div className="space-y-4">
+                    <img
+                      src={imagePreview}
+                      alt="Crop preview"
+                      className="max-h-64 mx-auto rounded-lg"
+                    />
+                    <p className="text-sm text-muted-foreground">Image selected</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex justify-center gap-4">
+                      <Upload className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                    <p className="text-foreground font-medium">
+                      Drag and drop your image here
+                    </p>
+                    <p className="text-sm text-muted-foreground">or</p>
+                  </div>
+                )}
+
+                <div className="flex gap-4 justify-center mt-4">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Add Photo
+                  </Button>
+
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="gap-2"
+                  >
+                    <Camera className="h-4 w-4" />
+                    Scan Photo
+                  </Button>
+                </div>
+              </div>
+
+              {/* Description Input */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Brief Description
+                </label>
+                <Input
+                  placeholder="Type a brief description of the problem..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              {/* Voice Recording */}
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-foreground">
+                  Voice Recording (Optional)
+                </label>
+                <div className="flex gap-2">
+                  <Button
+                    variant={isRecording ? "destructive" : "secondary"}
+                    onClick={handleVoiceRecord}
+                    className="gap-2 flex-1"
+                  >
+                    <Mic className="h-4 w-4" />
+                    {isRecording ? "Stop Recording" : "Record voice (your language)"}
+                  </Button>
+                  {voiceFile && (
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handlePlayVoice}
+                    >
+                      <Play className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground italic">
+                  Voice will be auto-translated to English (backend)
+                </p>
+
+                {transcription && (
+                  <div className="bg-muted rounded-md p-3">
+                    <p className="text-sm text-foreground font-medium mb-1">
+                      Transcription:
+                    </p>
+                    <p className="text-sm text-muted-foreground">{transcription}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                className="w-full gap-2"
+                onClick={handleSubmit}
+                disabled={!imageFile || isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  "Send for Detection"
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+}

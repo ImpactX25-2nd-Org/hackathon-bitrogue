@@ -1,170 +1,156 @@
 import { useState } from "react";
-import { MessageCirclePlus, Sprout } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DiseaseDetectionResult } from "@/components/DiseaseDetectionResult";
+import { CommunityDashboard } from "@/components/CommunityDashboard";
+import { SolutionPage } from "@/components/SolutionPage";
 import { Button } from "@/components/ui/button";
-import { QuestionCard } from "@/components/QuestionCard";
-import { TrendingSidebar } from "@/components/TrendingSidebar";
-import { TopFarmersCard } from "@/components/TopFarmersCard";
-import { AskQuestionModal } from "@/components/AskQuestionModal";
-
-const mockQuestions = [
-  {
-    id: "1",
-    author: "Ramesh Yadav",
-    authorLevel: "beginner" as const,
-    authorScore: 120,
-    question: "Which pesticide should I use for whiteflies on tomato?",
-    description: "My tomato plants are heavily infested with whiteflies. Looking for effective and safe pesticide recommendations.",
-    timestamp: "2 hours ago",
-    tags: ["tomato", "pest-control", "whiteflies"],
-    answers: [
-      {
-        id: "a1",
-        author: "Priya Singh",
-        authorLevel: "expert" as const,
-        authorScore: 1180,
-        content: "Use Imidacloprid 17.8% SL at 0.3ml per litre of water. Spray during early morning or evening. Repeat after 10-12 days if needed. Also maintain proper plant spacing for better air circulation.",
-        isVerified: true,
-        verificationReason: "This recommendation matches agricultural guidelines for whitefly control on tomatoes. Imidacloprid is approved by CIBRC and the dosage is scientifically validated.",
-        helpful: 15,
-        timestamp: "1 hour ago",
-      },
-      {
-        id: "a2",
-        author: "Suresh Kumar",
-        authorLevel: "reliable" as const,
-        authorScore: 650,
-        content: "Try neem oil spray - 5ml per litre water. It's organic and safe. I've been using it for 3 years with good results.",
-        isVerified: true,
-        verificationReason: "Neem-based pesticides are recognized as effective organic alternatives for whitefly management. The concentration mentioned is within safe and effective limits.",
-        helpful: 8,
-        timestamp: "45 minutes ago",
-      },
-    ],
-  },
-  {
-    id: "2",
-    author: "Meena Devi",
-    authorLevel: "reliable" as const,
-    authorScore: 540,
-    question: "Best time to plant wheat in North India?",
-    description: "Planning to plant wheat this season. What's the optimal sowing time for maximum yield in Punjab region?",
-    timestamp: "5 hours ago",
-    tags: ["wheat", "sowing", "timing", "north-india"],
-    answers: [
-      {
-        id: "a3",
-        author: "Rajesh Kumar",
-        authorLevel: "expert" as const,
-        authorScore: 1250,
-        content: "For Punjab, ideal sowing window is 1st November to 25th November. Late sowing reduces yield by 1% per day after 25th Nov. Ensure soil temperature is 20-25°C for best germination.",
-        isVerified: true,
-        verificationReason: "This aligns with Punjab Agricultural University recommendations and ICAR guidelines for wheat cultivation in North-Western plains.",
-        helpful: 22,
-        timestamp: "3 hours ago",
-      },
-    ],
-  },
-  {
-    id: "3",
-    author: "Anil Sharma",
-    authorLevel: "beginner" as const,
-    authorScore: 85,
-    question: "How to increase soil fertility naturally?",
-    description: "My soil test shows low nitrogen. Looking for organic methods to improve soil health without chemical fertilizers.",
-    timestamp: "1 day ago",
-    tags: ["soil-health", "organic-farming", "fertility"],
-    answers: [
-      {
-        id: "a4",
-        author: "Amit Patel",
-        authorLevel: "reliable" as const,
-        authorScore: 890,
-        content: "Grow green manure crops like Dhaincha or Sunnhemp before main crop. Incorporate after 45-50 days. Also add well-decomposed FYM @ 10 tons per hectare. Practice crop rotation with legumes.",
-        isVerified: true,
-        verificationReason: "Green manuring and FYM application are scientifically proven methods to increase soil nitrogen and organic matter content, as per ICAR-IARI research.",
-        helpful: 18,
-        timestamp: "20 hours ago",
-      },
-      {
-        id: "a5",
-        author: "Kavita Singh",
-        authorLevel: "expert" as const,
-        authorScore: 1050,
-        content: "Use vermicompost @ 5 tons/hectare. Also apply biofertilizers like Rhizobium for legumes and Azotobacter for cereals. These fix atmospheric nitrogen naturally.",
-        isVerified: true,
-        verificationReason: "Vermicompost and biofertilizers are validated by agricultural research institutions for sustainable soil fertility management.",
-        helpful: 14,
-        timestamp: "18 hours ago",
-      },
-    ],
-  },
-];
+import { Sprout, Users, Lightbulb, Camera } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
-  const [showAskQuestion, setShowAskQuestion] = useState(false);
+  const navigate = useNavigate();
+  const [isSolutionPageOpen, setIsSolutionPageOpen] = useState(false);
+  
+  // Mock data for disease detection
+  const mockDiseaseData = {
+    diseaseName: "Early Blight (Alternaria solani)",
+    reliability: 92,
+    nextSteps: [
+      "Remove and destroy infected leaves immediately to prevent spread",
+      "Apply copper-based fungicide every 7-10 days",
+      "Ensure proper spacing between plants for air circulation",
+      "Water at soil level, avoid wetting leaves",
+      "Apply mulch to prevent soil splash onto lower leaves",
+    ],
+    communityAdvice: [
+      {
+        farmerName: "Suresh Deshmukh",
+        trustScore: 88,
+        advice: "I faced this same issue last month. Applied Mancozeb fungicide twice with 10 days gap. Also removed all infected leaves. Crop recovered well in 3 weeks.",
+        helpfulCount: 24,
+        responseCount: 8,
+        timestamp: "2 days ago",
+      },
+      {
+        farmerName: "Kavita Naik",
+        trustScore: 95,
+        advice: "Early blight spreads fast in humid weather. I use neem oil mixed with copper fungicide - it's organic and very effective. Also maintain good plant spacing of at least 60cm.",
+        helpfulCount: 31,
+        responseCount: 12,
+        timestamp: "5 days ago",
+      },
+    ],
+    isCommon: true,
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
-              <Sprout className="h-6 w-6 text-primary-foreground" />
+      <header className="border-b border-border bg-card">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Sprout className="h-8 w-8 text-primary" />
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">FarmConnect</h1>
+                <p className="text-sm text-muted-foreground">Agricultural Community Support Platform</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-primary">KrishiAI</h1>
-              <p className="text-xs text-muted-foreground">Farmer Community</p>
-            </div>
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => navigate("/crop-scan")}
+            >
+              <Camera className="h-4 w-4" />
+              Scan Crop
+            </Button>
           </div>
-          <Button onClick={() => setShowAskQuestion(true)} className="gap-2">
-            <MessageCirclePlus className="h-4 w-4" />
-            Ask Question
-          </Button>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-[1fr_350px] gap-6">
-          {/* Left Column - Questions & Top Farmers */}
-          <div className="space-y-6">
-            {/* Welcome Banner */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-primary via-primary-light to-success text-primary-foreground">
-              <h2 className="text-2xl font-bold mb-2">Welcome to KrishiAI Community! 🌾</h2>
-              <p className="text-sm opacity-90">
-                Ask questions, share knowledge, and get AI-verified answers from fellow farmers
-              </p>
+        <Tabs defaultValue="detection" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+            <TabsTrigger value="detection" className="gap-2">
+              <Sprout className="h-4 w-4" />
+              Disease Detection
+            </TabsTrigger>
+            <TabsTrigger value="community" className="gap-2">
+              <Users className="h-4 w-4" />
+              Community Dashboard
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="detection" className="mt-0">
+            <div className="max-w-4xl mx-auto">
+              <DiseaseDetectionResult {...mockDiseaseData} />
             </div>
-
-            {/* Top Farmers */}
-            <TopFarmersCard />
-
-            {/* Questions Feed */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-foreground">Recent Discussions</h2>
-                <Button variant="outline" size="sm">Latest</Button>
-              </div>
-              <div className="space-y-4">
-                {mockQuestions.map((question) => (
-                  <QuestionCard key={question.id} {...question} />
-                ))}
-              </div>
+          </TabsContent>
+          
+          <TabsContent value="community" className="mt-0">
+            <div className="max-w-5xl mx-auto">
+              <CommunityDashboard />
             </div>
-          </div>
-
-          {/* Right Column - Trending Sidebar */}
-          <div className="hidden lg:block">
-            <TrendingSidebar />
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </main>
 
-      {/* Ask Question Modal */}
-      <AskQuestionModal
-        isOpen={showAskQuestion}
-        onClose={() => setShowAskQuestion(false)}
+      <div className="mt-16 border-t border-border bg-muted/30">
+        <div className="container mx-auto px-4 py-12">
+          <h2 className="text-2xl font-bold text-foreground mb-8 text-center">Community Workflow</h2>
+          <div className="prose prose-sm max-w-none">
+            <div className="bg-card rounded-lg p-6 border border-border">
+              <h3 className="text-lg font-semibold text-foreground mb-4">How the System Works:</h3>
+              
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">1. Disease Detection & Analysis</h4>
+                  <p className="text-muted-foreground text-sm">
+                    Farmer uploads crop image → ML model analyzes → Provides diagnosis with reliability score
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">2. Common Disease Flow</h4>
+                  <p className="text-muted-foreground text-sm">
+                    If disease is common → Display AI suggestions with color-coded reliability + Community advice from farmers with proven trust scores
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">3. Rare Disease Flow</h4>
+                  <p className="text-muted-foreground text-sm">
+                    If disease is rare/new → Farmer posts to Community Dashboard → Community members respond → Government extension workers verify solution
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-primary mb-2">4. Trust Score System</h4>
+                  <p className="text-muted-foreground text-sm">
+                    Each community member has a trust score that increases with positive feedback and decreases with negative feedback. This ensures reliable advice surfaces to the top.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Action Button - Solve This */}
+      <Button
+        size="lg"
+        className="fixed bottom-8 right-8 h-14 px-6 rounded-full shadow-lg gap-2 z-50"
+        onClick={() => setIsSolutionPageOpen(true)}
+      >
+        <Lightbulb className="h-5 w-5" />
+        Solve this
+      </Button>
+
+      {/* Solution Page Modal */}
+      <SolutionPage
+        open={isSolutionPageOpen}
+        onClose={() => setIsSolutionPageOpen(false)}
+        diseaseName={mockDiseaseData.diseaseName}
+        imageUrl="/placeholder.svg"
       />
     </div>
   );

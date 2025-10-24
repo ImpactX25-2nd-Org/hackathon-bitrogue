@@ -1,0 +1,129 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ReliabilityIndicator } from "./ReliabilityIndicator";
+import { CommunityAdviceCard } from "./CommunityAdviceCard";
+import { Button } from "@/components/ui/button";
+import { Share2, AlertTriangle, Volume2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { playTranslatedMessage } from "@/lib/api-placeholders";
+import { toast } from "@/hooks/use-toast";
+
+interface DiseaseDetectionResultProps {
+  diseaseName: string;
+  reliability: number;
+  nextSteps: string[];
+  communityAdvice?: Array<{
+    farmerName: string;
+    farmerAvatar?: string;
+    trustScore: number;
+    advice: string;
+    helpfulCount: number;
+    responseCount: number;
+    timestamp: string;
+  }>;
+  isCommon: boolean;
+}
+
+export const DiseaseDetectionResult = ({
+  diseaseName,
+  reliability,
+  nextSteps,
+  communityAdvice,
+  isCommon,
+}: DiseaseDetectionResultProps) => {
+  const handlePlayMessage = async () => {
+    try {
+      const result = await playTranslatedMessage("mock_scan_id");
+      toast({
+        title: "Playing message",
+        description: "Audio will be available after backend integration",
+      });
+      console.log("Audio URL:", result.audioUrl);
+    } catch (error) {
+      toast({
+        title: "Audio not available",
+        description: "Backend integration required",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="border-2 border-primary">
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="space-y-2">
+              <CardTitle className="text-2xl text-foreground">{diseaseName}</CardTitle>
+              <ReliabilityIndicator percentage={reliability} />
+            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Share2 className="h-4 w-4" />
+              Share to Community
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h3 className="font-semibold text-foreground mb-3">Suggested Next Steps:</h3>
+            <ul className="space-y-2">
+              {nextSteps.map((step, index) => (
+                <li key={index} className="flex gap-3 text-sm">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                    {index + 1}
+                  </span>
+                  <span className="text-foreground">{step}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Play Message Button */}
+          <Button 
+            variant="secondary" 
+            className="w-full gap-2 mt-4"
+            onClick={handlePlayMessage}
+          >
+            <Volume2 className="h-4 w-4" />
+            Play message (your language)
+          </Button>
+        </CardContent>
+      </Card>
+
+      {isCommon && communityAdvice && communityAdvice.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-semibold text-foreground">Community Advice</h3>
+            <span className="text-sm text-muted-foreground">
+              ({communityAdvice.length} farmers shared their experience)
+            </span>
+          </div>
+          <div className="space-y-4">
+            {communityAdvice.map((advice, index) => (
+              <CommunityAdviceCard key={index} {...advice} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isCommon && (
+        <Card className="bg-warning/10 border-warning">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-4">
+              <AlertTriangle className="h-6 w-6 text-warning flex-shrink-0 mt-1" />
+              <div className="space-y-2">
+                <h3 className="font-semibold text-foreground">Rare Disease Detected</h3>
+                <p className="text-sm text-muted-foreground">
+                  This disease is uncommon in our community records. We recommend posting this to the
+                  community dashboard to get input from experienced farmers and extension workers.
+                </p>
+                <Button className="mt-3 bg-warning text-warning-foreground hover:bg-warning/90">
+                  Post to Community Dashboard
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
