@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DiseaseDetectionResult } from "@/components/DiseaseDetectionResult";
 import { CommunityDashboard } from "@/components/CommunityDashboard";
 import { SolutionPage } from "@/components/SolutionPage";
 import { Button } from "@/components/ui/button";
 import { Sprout, Users, Lightbulb, Camera, HelpCircle, LogOut, Globe, ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -20,12 +20,80 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { useLanguage, languages } from "@/contexts/LanguageContext";
+import { getUserScans, getScanById } from "@/lib/api";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isSolutionPageOpen, setIsSolutionPageOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("detection");
   const { currentLanguage, setLanguage } = useLanguage();
+  const [diseaseData, setDiseaseData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load scan data from backend
+  useEffect(() => {
+    const loadScanData = async () => {
+      const scanId = searchParams.get('scanId');
+      
+      try {
+        setIsLoading(true);
+        console.log('📊 Loading scan data from backend...');
+        
+        if (scanId) {
+          // Load specific scan
+          console.log('� Loading scan by ID:', scanId);
+          const response = await getScanById(scanId);
+          
+          if (response.success && response.data) {
+            setDiseaseData({
+              diseaseName: response.data.diseaseName || "Unknown Disease",
+              reliability: response.data.reliability || 0,
+              timestamp: response.data.timestamp,
+              nextSteps: response.data.nextSteps || [],
+              communityAdvice: response.data.communityAdvice || [],
+              isCommon: response.data.isCommon || true,
+            });
+            console.log('✅ Loaded scan data:', response.data.diseaseName);
+          }
+        } else {
+          // Load user's latest scan
+          console.log('📍 Loading user\'s latest scan');
+          const response = await getUserScans(0, 1);
+          
+          if (response.success && response.data.scans.length > 0) {
+            const latestScan = response.data.scans[0];
+            setDiseaseData({
+              diseaseName: latestScan.disease_name || "Unknown Disease",
+              reliability: latestScan.reliability || 0,
+              timestamp: latestScan.created_at,
+              nextSteps: latestScan.next_steps || [],
+              communityAdvice: [],
+              isCommon: latestScan.is_common || true,
+            });
+            console.log('✅ Loaded latest scan:', latestScan.disease_name);
+          } else {
+            // No scans yet, show mock data
+            console.log('📝 No scans found, using mock data');
+            setDiseaseData(mockDiseaseData);
+          }
+        }
+      } catch (error: any) {
+        console.error('❌ Error loading scan data:', error);
+        toast({
+          title: "Failed to load scan data",
+          description: error.message || "Using demo data",
+          variant: "destructive",
+        });
+        setDiseaseData(mockDiseaseData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadScanData();
+  }, [searchParams]); // Reload when URL params change
+
 
   const handleLanguageChange = (language: string) => {
     setLanguage(language);
@@ -45,7 +113,27 @@ const Index = () => {
     navigate("/");
   };
   
-  // Mock data for disease detection
+  // Mock community advice data
+  const mockCommunityAdvice = [
+    {
+      farmerName: "Suresh Deshmukh",
+      trustScore: 88,
+      advice: "I faced this same issue last month. Applied Mancozeb fungicide twice with 10 days gap. Also removed all infected leaves. Crop recovered well in 3 weeks.",
+      helpfulCount: 24,
+      responseCount: 8,
+      timestamp: "2 days ago",
+    },
+    {
+      farmerName: "Kavita Naik",
+      trustScore: 95,
+      advice: "Early blight spreads fast in humid weather. I use neem oil mixed with copper fungicide - it's organic and very effective. Also maintain good plant spacing of at least 60cm.",
+      helpfulCount: 31,
+      responseCount: 12,
+      timestamp: "5 days ago",
+    },
+  ];
+  
+  // Fallback mock data for disease detection
   const mockDiseaseData = {
     diseaseName: "Early Blight (Alternaria solani)",
     reliability: 92,
@@ -56,24 +144,7 @@ const Index = () => {
       "Water at soil level, avoid wetting leaves",
       "Apply mulch to prevent soil splash onto lower leaves",
     ],
-    communityAdvice: [
-      {
-        farmerName: "Suresh Deshmukh",
-        trustScore: 88,
-        advice: "I faced this same issue last month. Applied Mancozeb fungicide twice with 10 days gap. Also removed all infected leaves. Crop recovered well in 3 weeks.",
-        helpfulCount: 24,
-        responseCount: 8,
-        timestamp: "2 days ago",
-      },
-      {
-        farmerName: "Kavita Naik",
-        trustScore: 95,
-        advice: "Early blight spreads fast in humid weather. I use neem oil mixed with copper fungicide - it's organic and very effective. Also maintain good plant spacing of at least 60cm.",
-        helpfulCount: 31,
-        responseCount: 12,
-        timestamp: "5 days ago",
-      },
-    ],
+    communityAdvice: mockCommunityAdvice,
     isCommon: true,
   };
 
@@ -170,8 +241,35 @@ const Index = () => {
                 </Tooltip>
                 <div className="flex-1"></div>
               </div>
+
+              {/* Scan new crop button */}
+              <div className="flex items-center justify-between mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/crop-scan")}
+                  className="gap-2"
+                >
+                  <Camera className="h-4 w-4" />
+                  Scan New Crop
+                </Button>
+                {diseaseData?.timestamp && (
+                  <p className="text-xs text-muted-foreground">
+                    Last scan: {new Date(diseaseData.timestamp).toLocaleString()}
+                  </p>
+                )}
+              </div>
               
-              <DiseaseDetectionResult {...mockDiseaseData} />
+              {isLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-muted-foreground">Loading scan data...</p>
+                  </div>
+                </div>
+              ) : (
+                <DiseaseDetectionResult {...(diseaseData || mockDiseaseData)} />
+              )}
             </div>
           </TabsContent>
           

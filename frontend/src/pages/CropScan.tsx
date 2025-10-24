@@ -22,6 +22,18 @@ export default function CropScan() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
+  // Reset form to allow new scan
+  const resetForm = () => {
+    setImageFile(null);
+    setImagePreview("");
+    setDescription("");
+    setCropName("");
+    setVoiceFile(null);
+    setTranscription("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -84,10 +96,14 @@ export default function CropScan() {
 
     setIsSubmitting(true);
     
-    // Call placeholder function for backend integration
-    // Payload structure: { scanId, imageUrl, cropName, description, voiceFileMeta: { filename, language } }
     try {
-      await onSendForDetection({
+      console.log('📤 Sending image for detection:', {
+        cropName,
+        imageSize: imageFile.size,
+        imageType: imageFile.type
+      });
+      
+      const result = await onSendForDetection({
         image: imageFile,
         cropName,
         description,
@@ -95,21 +111,24 @@ export default function CropScan() {
         language: currentLanguage,
       });
       
+      console.log('✅ Detection result received:', result);
+      
       toast({
-        title: "Scan submitted successfully",
-        description: "Analyzing your crop image...",
+        title: "Analysis complete!",
+        description: `Disease detected: ${result.diseaseName}`,
       });
       
-      // Navigate to detection page (simulated)
+      // Navigate to dashboard to show results (scanId will be in URL)
       setTimeout(() => {
         setIsSubmitting(false);
-        navigate("/dashboard");
-      }, 2000);
-    } catch (error) {
+        navigate(`/dashboard?scanId=${result.scanId}`);
+      }, 1000);
+      
+    } catch (error: any) {
       setIsSubmitting(false);
       toast({
-        title: "Submission pending",
-        description: "Backend integration required",
+        title: "Analysis failed",
+        description: error.message || "Please try again",
         variant: "destructive",
       });
     }
@@ -262,20 +281,30 @@ export default function CropScan() {
               </div>
 
               {/* Submit Button */}
-              <Button
-                className="w-full gap-2"
-                onClick={handleSubmit}
-                disabled={!imageFile || !cropName || !description || isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Analyzing...
-                  </>
-                ) : (
-                  "Send for Detection"
-                )}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  onClick={resetForm}
+                  disabled={!imageFile && !cropName && !description}
+                >
+                  Clear Form
+                </Button>
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={handleSubmit}
+                  disabled={!imageFile || !cropName || !description || isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    "Send for Detection"
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

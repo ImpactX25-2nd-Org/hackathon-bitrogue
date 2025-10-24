@@ -14,50 +14,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { useLanguage, languages } from "@/contexts/LanguageContext";
-
-/**
- * Placeholder function for backend login integration
- * 
- * Backend should:
- * - Validate credentials (phone/email + password/OTP)
- * - Return authentication token and user details
- * - Handle multi-language support
- * 
- * Example endpoint: POST /api/auth/login
- * 
- * Request format:
- * {
- *   identifier: string (phone or email),
- *   password: string,
- *   language: string
- * }
- * 
- * Response format:
- * {
- *   success: boolean,
- *   token: string,
- *   user: { id, name, phone, language, trustScore }
- * }
- */
-const loginUser = async (identifier: string, password: string, language: string) => {
-  console.log('[PLACEHOLDER] loginUser called with:', { identifier, password: '***', language });
-  
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // Mock successful login
-  return {
-    success: true,
-    token: 'mock_jwt_token_' + Date.now(),
-    user: {
-      id: 'user_123',
-      name: 'Mock Farmer',
-      phone: identifier,
-      language: language,
-      trustScore: 75,
-    },
-  };
-};
+import { loginUser as loginUserAPI } from "@/lib/api";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -81,10 +38,14 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Call placeholder login function
-      const result = await loginUser(identifier, password, currentLanguage);
+      // Call actual backend API
+      const result = await loginUserAPI({
+        identifier,
+        password,
+        language: currentLanguage,
+      });
 
-      if (result.success) {
+      if (result.success && result.token && result.user) {
         // Store auth token and user data
         localStorage.setItem("authToken", result.token);
         localStorage.setItem("userData", JSON.stringify(result.user));
@@ -96,11 +57,17 @@ export default function Login() {
 
         // Navigate to dashboard
         navigate("/dashboard");
+      } else {
+        toast({
+          title: "Login failed",
+          description: result.message || "Invalid credentials",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Login failed",
-        description: "Invalid credentials. Please try again.",
+        description: error.message || "Invalid credentials. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -258,12 +225,8 @@ export default function Login() {
                     type="button"
                     variant="link"
                     className="px-1 text-primary hover:text-primary/80 font-semibold text-sm"
-                    onClick={() => {
-                      toast({
-                        title: "Feature coming soon",
-                        description: "Registration will be available after backend integration",
-                      });
-                    }}
+                    onClick={() => navigate("/signup")}
+                    disabled={isLoading}
                   >
                     Sign up
                   </Button>
@@ -272,10 +235,10 @@ export default function Login() {
             </CardContent>
           </Card>
 
-          {/* Backend Integration Note */}
+          {/* Info Note */}
           <div className="mt-6 text-center">
             <p className="text-xs text-muted-foreground bg-muted rounded-lg p-3">
-              💡 Demo mode: Any credentials will work for testing
+              � Secure login with backend authentication
             </p>
           </div>
         </div>

@@ -28,6 +28,7 @@ export interface DetectionResult {
   nextSteps: string[];
   isCommon: boolean;
   communityAdvice?: any[];
+  timestamp?: string; // When the scan was performed
 }
 
 export interface Suggestion {
@@ -77,22 +78,46 @@ export interface Suggestion {
  *   voiceFileMeta: { filename: "recording.webm", language: "mr" }
  * }
  */
-export const onSendForDetection = async (payload: ScanPayload): Promise<{ scanId: string }> => {
-  console.log('[PLACEHOLDER] onSendForDetection called with:', {
+/**
+ * Send crop image and description for disease detection
+ * 
+ * Uses real backend ML API for disease detection
+ */
+export const onSendForDetection = async (payload: ScanPayload): Promise<DetectionResult> => {
+  console.log('[API] Sending image for disease detection:', {
     imageSize: payload.image.size,
     cropName: payload.cropName,
     description: payload.description,
-    hasVoice: !!payload.voiceFile,
     language: payload.language,
   });
 
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  try {
+    // Use the real API from api.ts
+    const { createScan } = await import('@/lib/api');
+    
+    const result = await createScan({
+      image: payload.image,
+      crop_name: payload.cropName.toLowerCase(),
+      description: payload.description,
+      language: payload.language
+    });
 
-  // Return mock response
-  return {
-    scanId: `scan_${Date.now()}`,
-  };
+    if (result.success && result.data) {
+      return {
+        scanId: result.data.scan_id,
+        diseaseName: result.data.disease_detected,
+        reliability: result.data.confidence,
+        nextSteps: [], // Will be populated from backend later
+        isCommon: true,
+        timestamp: new Date().toISOString(), // Add timestamp
+      };
+    } else {
+      throw new Error(result.message || 'Detection failed');
+    }
+  } catch (error: any) {
+    console.error('Detection failed:', error);
+    throw error;
+  }
 };
 
 /**

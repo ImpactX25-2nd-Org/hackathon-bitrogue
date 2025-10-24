@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Index from "./pages/Index";
 import CropScan from "./pages/CropScan";
 import Documentation from "./pages/Documentation";
@@ -23,6 +24,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/dashboard" element={<Index />} />
             <Route path="/crop-scan" element={<CropScan />} />
             <Route path="/documentation" element={<Documentation />} />

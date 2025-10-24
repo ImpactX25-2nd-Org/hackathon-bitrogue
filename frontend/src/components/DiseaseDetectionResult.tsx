@@ -79,13 +79,22 @@ export const DiseaseDetectionResult = ({
     }
   };
 
+  // Format disease name for better display
+  const formatDiseaseName = (name: string) => {
+    // Convert snake_case to Title Case
+    return name
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <div className="space-y-6">
       <Card className="border-2 border-primary">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="space-y-2">
-              <CardTitle className="text-2xl text-foreground">{diseaseName}</CardTitle>
+              <CardTitle className="text-2xl text-foreground">{formatDiseaseName(diseaseName)}</CardTitle>
               <ReliabilityIndicator percentage={reliability} />
             </div>
             <Button 

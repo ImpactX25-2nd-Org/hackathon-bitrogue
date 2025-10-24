@@ -1,0 +1,6 @@
+groundnut_early_leaf_spot
+groundnut_early_rust
+groundnut_healthy
+groundnut_late_leaf_spot
+groundnut_nutrition_deficiency
+groundnut_rust

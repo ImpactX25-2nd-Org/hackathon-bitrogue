@@ -1,0 +1,61 @@
+"""
+INSTRUCTIONS: Place Your Trained Model Files Here
+
+This directory needs the following files for disease detection to work:
+
+1. chilli_model_best.pth
+2. groundnut_model_best.pth  
+3. rice_model_best.pth
+
+CLASS FILES (already created):
+✓ chilli_classes.txt
+✓ groundnut_classes.txt
+✓ rice_classes.txt
+
+MODEL TRAINING DETAILS:
+- Architecture: EfficientNet-B3 with custom head
+- Input: 224x224 RGB images
+- Framework: PyTorch with timm library
+- Training: Uses ImageNet pretrained weights
+
+HOW TO ADD MODELS:
+
+Option 1: Copy from training directory
+If you have trained models, copy the .pth files:
+```
+copy path\to\chilli_model_best.pth backend\ml_models\
+copy path\to\groundnut_model_best.pth backend\ml_models\
+copy path\to\rice_model_best.pth backend\ml_models\
+```
+
+Option 2: Download from cloud storage
+If models are stored in cloud (Google Drive, S3, etc):
+1. Download the .pth files
+2. Place them in this directory
+
+Option 3: Use placeholder models (for testing)
+To test the API without real models, create dummy files:
+```python
+import torch
+import torch.nn as nn
+
+# Create a dummy model with correct architecture
+model = create_efficientnet_model(num_classes=6)
+torch.save(model.state_dict(), 'chilli_model_best.pth')
+```
+
+VERIFICATION:
+After adding model files, the backend will show on startup:
+- "✓ Loaded chilli model from ml_models/chilli_model_best.pth"
+- "✓ Loaded groundnut model from ml_models/groundnut_model_best.pth"
+- "✓ Loaded rice model from ml_models/rice_model_best.pth"
+
+If models are missing, you'll see:
+- "⚠️  Model file not found: ml_models/xxx_model_best.pth"
+- API will return 503 error when trying to use that crop type
+
+TROUBLESHOOTING:
+- Models not loading? Check file names match exactly
+- Wrong predictions? Verify class names in .txt files match training
+- CUDA errors? Models will automatically fall back to CPU
+"""
