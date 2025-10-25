@@ -48,6 +48,7 @@ const Index = () => {
         if (scanId) {
           // Load specific scan
           console.log('📍 Loading scan by ID:', scanId, 'with language:', currentLanguage);
+          console.log('🔗 API URL will be:', `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/scans/${scanId}?language=${currentLanguage}`);
           const response = await getScanById(scanId, currentLanguage);
           console.log('✓ Got scan response:', response);
           
@@ -99,7 +100,7 @@ const Index = () => {
     };
 
     loadScanData();
-  }, [searchParams]); // Reload when URL params change
+  }, [searchParams, currentLanguage]); // Reload when URL params OR language changes
 
 
   const handleLanguageChange = (language: string) => {

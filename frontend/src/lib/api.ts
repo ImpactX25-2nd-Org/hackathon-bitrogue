@@ -189,6 +189,27 @@ export async function markCommentHelpful(scanId: string, commentId: string) {
   return handleResponse(response);
 }
 
+// ==================== AUDIO/TRANSCRIPTION APIs ====================
+
+export async function transcribeAudio(audioBlob: Blob, language?: string) {
+  const formData = new FormData();
+  formData.append('audio', audioBlob, 'recording.webm');
+  if (language) {
+    formData.append('language', language);
+  }
+  
+  const token = localStorage.getItem('authToken');
+  const response = await fetch(`${API_BASE_URL}/language/transcribe`, {
+    method: 'POST',
+    headers: {
+      ...(token && { 'Authorization': `Bearer ${token}` }),
+    },
+    body: formData,
+  });
+  
+  return handleResponse(response);
+}
+
 // ==================== COMMUNITY APIs ====================
 
 export interface CreatePostData {

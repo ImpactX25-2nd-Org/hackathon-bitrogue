@@ -25,11 +25,12 @@ llm_service: Optional[LLMService] = None
 
 def translate_scan_data(scan: dict, language: str) -> dict:
     """Translate scan data fields to target language using IndicTrans"""
-    if language == "en" or not scan:
-        logger.info(f"🔤 Translation skipped - language is 'en' or scan is empty")
+    if not scan:
+        logger.info(f"🔤 Translation skipped - scan is empty")
         return scan
     
     logger.info(f"🌐 Starting translation to {language} for scan {scan.get('id', 'unknown')}")
+    logger.info(f"🎯 Target language: {language}")
     
     try:
         from app.services import translation_service
@@ -40,37 +41,102 @@ def translate_scan_data(scan: dict, language: str) -> dict:
         translator = translation_service.translation_service
         logger.info(f"✓ Translation service loaded successfully")
         
-        # Translate disease name
+        def detect_language(text: str) -> str:
+            """Simple language detection based on character sets"""
+            if not text:
+                return "en"
+            
+            # Count different script characters
+            ascii_count = sum(1 for char in text if ord(char) < 128)
+            kannada_count = sum(1 for char in text if 0x0C80 <= ord(char) <= 0x0CFF)
+            tamil_count = sum(1 for char in text if 0x0B80 <= ord(char) <= 0x0BFF)
+            
+            total_chars = len(text)
+            ascii_ratio = ascii_count / total_chars
+            kannada_ratio = kannada_count / total_chars
+            tamil_ratio = tamil_count / total_chars
+            
+            # Determine language based on dominant script
+            if kannada_ratio > 0.3:
+                return "kn"
+            elif tamil_ratio > 0.3:
+                return "ta"
+            elif ascii_ratio > 0.7:
+                return "en"
+            else:
+                return "en"  # Default to English
+        
+        # Translate disease name (always from English in database)
         if scan.get("disease_name"):
             original = scan["disease_name"].replace("_", " ").title()
-            logger.info(f"📝 Translating disease name: '{original}' (en → {language})")
-            translated = translator.translate_single(original, "en", language)
-            scan["disease_name_translated"] = translated
-            logger.info(f"✓ Disease name translated: '{original}' → '{translated}'")
+            if language == "en":
+                # For English, just use the original formatted name
+                scan["disease_name_translated"] = original
+                logger.info(f"✓ Disease name (English): '{original}'")
+            else:
+                # For other languages, translate from English
+                logger.info(f"📝 Translating disease name: '{original}' (en → {language})")
+                translated = translator.translate_single(original, "en", language)
+                scan["disease_name_translated"] = translated
+                logger.info(f"✓ Disease name translated: '{original}' → '{translated}'")
         
-        # Translate AI treatment advice
+        # Handle AI treatment advice - translate if needed
         if scan.get("ai_treatment_advice"):
-            original_advice = scan["ai_treatment_advice"][:50] + "..." if len(scan["ai_treatment_advice"]) > 50 else scan["ai_treatment_advice"]
-            logger.info(f"📝 Translating AI advice: '{original_advice}' (en → {language})")
-            translated = translator.translate_single(scan["ai_treatment_advice"], "en", language)
-            scan["ai_treatment_advice"] = translated
-            logger.info(f"✓ AI advice translated ({len(translated)} chars)")
+            if isinstance(scan["ai_treatment_advice"], dict):
+                # For structured format, check if summary needs translation
+                summary = scan["ai_treatment_advice"].get("summary", "")
+                if summary:
+                    detected_lang = detect_language(summary)
+                    if detected_lang != language:
+                        logger.info(f"📝 Translating AI advice summary ({detected_lang} → {language})")
+                        # For structured data, we'll leave it as is since it's complex
+                        # In production, you'd want to translate each field individually
+                        logger.info(f"✓ AI advice is structured format - keeping as is")
+                    else:
+                        logger.info(f"✓ AI advice already in target language ({language})")
+                else:
+                    logger.info(f"✓ AI advice is structured format - keeping as is")
+            else:
+                # For string format, translate if needed
+                detected_lang = detect_language(scan["ai_treatment_advice"])
+                if detected_lang != language:
+                    logger.info(f"📝 Translating AI advice ({detected_lang} → {language})")
+                    translated = translator.translate_single(scan["ai_treatment_advice"], detected_lang, language)
+                    scan["ai_treatment_advice"] = translated
+                    logger.info(f"✓ AI advice translated ({len(translated)} chars)")
+                else:
+                    logger.info(f"✓ AI advice already in target language ({language})")
         
-        # Translate next steps (array)
-        if scan.get("next_steps") and isinstance(scan["next_steps"], list):
-            logger.info(f"📝 Translating {len(scan['next_steps'])} next steps (en → {language})")
-            translated_steps = translator.translate(scan["next_steps"], "en", language)
-            scan["next_steps"] = translated_steps
-            logger.info(f"✓ Next steps translated: {len(translated_steps)} items")
-        
-        # Translate description
+        # Handle next steps - translate if needed
+        if scan.get("next_steps") and isinstance(scan["next_steps"], list) and len(scan["next_steps"]) > 0:
+            first_step = scan["next_steps"][0]
+            logger.info(f"🔍 Analyzing first next step: '{first_step[:50]}...'")
+            detected_lang = detect_language(first_step)
+            logger.info(f"🎯 Detected language: '{detected_lang}', Target: '{language}'")
+            if detected_lang != language:
+                logger.info(f"📝 Translating {len(scan['next_steps'])} next steps ({detected_lang} → {language})")
+                try:
+                    translated_steps = translator.translate(scan["next_steps"], detected_lang, language)
+                    scan["next_steps"] = translated_steps
+                    logger.info(f"✅ Next steps translated: {len(translated_steps)} items")
+                    logger.info(f"📝 First translated step: '{translated_steps[0][:50]}...'")
+                except Exception as e:
+                    logger.error(f"❌ Next steps translation error: {e}")
+            else:
+                logger.info(f"✓ Next steps already in target language ({language})")
+
+        # Handle description - translate if needed
         if scan.get("description"):
-            original_desc = scan["description"][:50] + "..." if len(scan["description"]) > 50 else scan["description"]
-            logger.info(f"📝 Translating description: '{original_desc}' (en → {language})")
-            translated = translator.translate_single(scan["description"], "en", language)
-            scan["description"] = translated
-            logger.info(f"✓ Description translated ({len(translated)} chars)")
-        
+            detected_lang = detect_language(scan["description"])
+            if detected_lang != language:
+                original_desc = scan["description"][:50] + "..." if len(scan["description"]) > 50 else scan["description"]
+                logger.info(f"📝 Translating description: '{original_desc}' ({detected_lang} → {language})")
+                translated = translator.translate_single(scan["description"], detected_lang, language)
+                scan["description"] = translated
+                logger.info(f"✓ Description translated ({len(translated)} chars)")
+            else:
+                logger.info(f"✓ Description already in target language ({language})")
+
         logger.info(f"🎉 Translation complete for scan {scan.get('id', 'unknown')}")
             
     except Exception as e:
@@ -79,8 +145,6 @@ def translate_scan_data(scan: dict, language: str) -> dict:
         logger.error(traceback.format_exc())
     
     return scan
-
-
 @router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
 async def create_scan(
     image: UploadFile = File(..., description="Crop image file"),
@@ -355,10 +419,9 @@ async def get_user_scans(
             if "_id" in scan:
                 scan["_id"] = str(scan["_id"])
             
-            # Translate scan data if not English
-            if language != "en":
-                logger.info(f"🔄 Translating scan {idx+1}/{len(scans)} (ID: {scan.get('id', 'unknown')})")
-                scan = translate_scan_data(scan, language)
+            # Always translate scan data to target language
+            logger.info(f"🔄 Translating scan {idx+1}/{len(scans)} (ID: {scan.get('id', 'unknown')})")
+            scan = translate_scan_data(scan, language)
         
         logger.info(f"✅ Successfully fetched and translated {len(scans)} scans")
         
@@ -439,10 +502,9 @@ async def get_community_scans(
             # Remove sensitive fields
             scan.pop("user_id", None)
             
-            # Translate scan data if not English
-            if language != "en":
-                logger.info(f"🔄 Translating community scan {idx+1}/{len(scans)} (ID: {scan.get('id', 'unknown')})")
-                scan = translate_scan_data(scan, language)
+            # Always translate scan data to target language
+            logger.info(f"🔄 Translating community scan {idx+1}/{len(scans)} (ID: {scan.get('id', 'unknown')})")
+            scan = translate_scan_data(scan, language)
         
         logger.info(f"✅ Successfully fetched and translated {len(scans)} community scans")
         
@@ -479,6 +541,7 @@ async def get_scan_details(
     """
     try:
         logger.info(f"📥 GET /scans/{scan_id} - User: {current_user.id}, Language: {language}")
+        logger.info(f"🔍 Target language for translation: '{language}'")
         
         scan = await db.scans.find_one({"id": scan_id})
         
@@ -554,29 +617,25 @@ async def get_scan_details(
             
             logger.info(f"Found {len(community_advice)} high-trust community advice for {disease_name}")
             
-            # Translate community advice if not English
-            if language != "en":
-                logger.info(f"🔄 Translating {len(community_advice)} community advice entries (en → {language})")
-                try:
-                    from app.services import translation_service
-                    if translation_service.translation_service:
-                        translator = translation_service.translation_service
-                        for idx, advice in enumerate(community_advice):
-                            if advice.get("advice"):
-                                original = advice["advice"][:50] + "..." if len(advice["advice"]) > 50 else advice["advice"]
-                                logger.info(f"📝 Translating advice {idx+1}: '{original}'")
-                                translated = translator.translate_single(advice["advice"], "en", language)
-                                advice["advice"] = translated
-                                logger.info(f"✓ Advice {idx+1} translated ({len(translated)} chars)")
-                        logger.info(f"✅ All community advice translated")
-                except Exception as e:
-                    logger.error(f"❌ Failed to translate community advice: {e}")
-        
-        # Translate scan data if not English
-        if language != "en":
-            logger.info(f"🔄 Translating scan details (en → {language})")
-            scan = translate_scan_data(scan, language)
-            logger.info(f"✅ Scan details translated")
+            # Always translate community advice to target language
+            logger.info(f"🔄 Translating {len(community_advice)} community advice entries (→ {language})")
+            try:
+                from app.services import translation_service
+                if translation_service.translation_service:
+                    translator = translation_service.translation_service
+                    for idx, advice in enumerate(community_advice):
+                        if advice.get("advice"):
+                            original = advice["advice"][:50] + "..." if len(advice["advice"]) > 50 else advice["advice"]
+                            logger.info(f"📝 Translating advice {idx+1}: '{original}'")
+                            translated = translator.translate_single(advice["advice"], "en", language)
+                            advice["advice"] = translated
+                            logger.info(f"✓ Advice {idx+1} translated ({len(translated)} chars)")
+                    logger.info(f"✅ All community advice translated")
+            except Exception as e:
+                logger.error(f"❌ Failed to translate community advice: {e}")        # Always translate scan data to target language
+        logger.info(f"🔄 Translating scan details (→ {language})")
+        scan = translate_scan_data(scan, language)
+        logger.info(f"✅ Scan details translated")
         
         logger.info(f"📦 Preparing response for scan {scan_id}")
         
@@ -850,6 +909,97 @@ async def test_translation(
         
     except Exception as e:
         logger.error(f"❌ Translation test failed: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
+
+@router.get("/debug/language-detection")
+async def debug_language_detection(
+    text: str = "ಸ್ಥಳೀಯ ಉತ್ಪನ್ನಗಳು",
+    target_lang: str = "en"
+):
+    """Debug endpoint to test language detection and translation"""
+    try:
+        logger.info(f"🔍 DEBUG: Testing language detection")
+        logger.info(f"📝 Input text: '{text}'")
+        logger.info(f"🎯 Target language: '{target_lang}'")
+        
+        # Test the detect_language function from translate_scan_data
+        def detect_language_test(text: str) -> str:
+            """Simple language detection based on character sets"""
+            if not text:
+                return "en"
+            
+            # Count different script characters
+            ascii_count = sum(1 for char in text if ord(char) < 128)
+            kannada_count = sum(1 for char in text if 0x0C80 <= ord(char) <= 0x0CFF)
+            tamil_count = sum(1 for char in text if 0x0B80 <= ord(char) <= 0x0BFF)
+            
+            total_chars = len(text)
+            ascii_ratio = ascii_count / total_chars
+            kannada_ratio = kannada_count / total_chars
+            tamil_ratio = tamil_count / total_chars
+            
+            logger.info(f"📊 Character analysis:")
+            logger.info(f"   ASCII: {ascii_count}/{total_chars} ({ascii_ratio:.2%})")
+            logger.info(f"   Kannada: {kannada_count}/{total_chars} ({kannada_ratio:.2%})")
+            logger.info(f"   Tamil: {tamil_count}/{total_chars} ({tamil_ratio:.2%})")
+            
+            # Determine language based on dominant script
+            if kannada_ratio > 0.3:
+                return "kn"
+            elif tamil_ratio > 0.3:
+                return "ta"
+            elif ascii_ratio > 0.7:
+                return "en"
+            else:
+                return "en"  # Default to English
+        
+        detected_lang = detect_language_test(text)
+        logger.info(f"🎯 Detected language: '{detected_lang}'")
+        
+        # Test translation if needed
+        if detected_lang != target_lang:
+            from app.services import translation_service
+            if translation_service.translation_service:
+                translator = translation_service.translation_service
+                logger.info(f"🔄 Translating {detected_lang} → {target_lang}")
+                translated = translator.translate_single(text, detected_lang, target_lang)
+                logger.info(f"✅ Translation result: '{translated}'")
+                
+                return {
+                    "success": True,
+                    "data": {
+                        "original_text": text,
+                        "detected_language": detected_lang,
+                        "target_language": target_lang,
+                        "translated_text": translated,
+                        "character_analysis": {
+                            "ascii_ratio": sum(1 for char in text if ord(char) < 128) / len(text),
+                            "kannada_ratio": sum(1 for char in text if 0x0C80 <= ord(char) <= 0x0CFF) / len(text),
+                            "tamil_ratio": sum(1 for char in text if 0x0B80 <= ord(char) <= 0x0BFF) / len(text)
+                        }
+                    }
+                }
+            else:
+                return {"success": False, "error": "Translation service not available"}
+        else:
+            return {
+                "success": True,
+                "data": {
+                    "original_text": text,
+                    "detected_language": detected_lang,
+                    "target_language": target_lang,
+                    "message": "No translation needed - already in target language"
+                }
+            }
+            
+    except Exception as e:
+        logger.error(f"❌ Debug test failed: {e}")
         import traceback
         logger.error(traceback.format_exc())
         return {

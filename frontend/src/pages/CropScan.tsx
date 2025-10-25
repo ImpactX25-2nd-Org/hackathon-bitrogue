@@ -2,9 +2,10 @@ import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sprout, Camera, Upload, Mic, Play, Loader2 } from "lucide-react";
+import { Sprout, Camera, Upload, Mic, Play, Loader2, StopCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { onSendForDetection } from "@/lib/api-placeholders";
+import { transcribeAudio } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -19,8 +20,11 @@ export default function CropScan() {
   const [voiceFile, setVoiceFile] = useState<Blob | null>(null);
   const [transcription, setTranscription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   // Reset form to allow new scan
   const resetForm = () => {
@@ -55,23 +59,90 @@ export default function CropScan() {
     }
   };
 
-  const handleVoiceRecord = () => {
+  const handleVoiceRecord = async () => {
     if (isRecording) {
+      // Stop recording
+      console.log('🛑 Stopping recording...');
       setIsRecording(false);
-      // Simulate voice recording completion (frontend only)
-      const mockBlob = new Blob(["mock audio data"], { type: "audio/webm" });
-      setVoiceFile(mockBlob);
-      setTranscription("Mock transcription: My tomato plants have brown spots on leaves");
-      toast({
-        title: "Recording completed",
-        description: "Voice will be auto-translated to English (backend)",
-      });
+      
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        mediaRecorderRef.current.stop();
+        toast({
+          title: "⏹️ Recording stopped",
+          description: "Processing audio with Whisper...",
+        });
+      }
     } else {
-      setIsRecording(true);
-      toast({
-        title: "Recording started",
-        description: "Hold to record your message",
-      });
+      // Start recording
+      try {
+        console.log('🎤 Requesting microphone access...');
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        audioChunksRef.current = [];
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+        
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunksRef.current.push(event.data);
+            console.log('📦 Audio chunk received:', event.data.size, 'bytes');
+          }
+        };
+        
+        mediaRecorder.onstop = async () => {
+          console.log('🎬 Recording stopped, processing', audioChunksRef.current.length, 'chunks');
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          setVoiceFile(audioBlob);
+          console.log('📼 Audio blob created:', audioBlob.size, 'bytes');
+          
+          // Stop all tracks to release microphone
+          stream.getTracks().forEach(track => track.stop());
+          
+          // Send to Whisper for transcription
+          setIsTranscribing(true);
+          try {
+            console.log('🔄 Sending audio to Whisper (language:', currentLanguage, ')');
+            const result = await transcribeAudio(audioBlob, currentLanguage);
+            console.log('✅ Transcription result:', result);
+            
+            if (result.success && result.data.text) {
+              setTranscription(result.data.text);
+              setDescription(result.data.text); // Auto-fill description
+              toast({
+                title: "✅ Voice transcribed!",
+                description: `"${result.data.text.substring(0, 50)}${result.data.text.length > 50 ? '...' : ''}"`,
+              });
+            } else {
+              throw new Error('No transcription text received');
+            }
+          } catch (error: any) {
+            console.error('❌ Transcription failed:', error);
+            toast({
+              title: "❌ Transcription failed",
+              description: error.message || "Could not transcribe audio. Please try again.",
+              variant: "destructive",
+            });
+          } finally {
+            setIsTranscribing(false);
+          }
+        };
+        
+        mediaRecorder.start();
+        setIsRecording(true);
+        console.log('✅ Recording started');
+        
+        toast({
+          title: "🎤 Recording started",
+          description: "Speak in your language! Click again to stop.",
+        });
+      } catch (error: any) {
+        console.error('❌ Microphone access denied:', error);
+        toast({
+          title: "❌ Microphone access denied",
+          description: "Please allow microphone access to use voice input.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -251,10 +322,25 @@ export default function CropScan() {
                   <Button
                     variant={isRecording ? "destructive" : "secondary"}
                     onClick={handleVoiceRecord}
+                    disabled={isTranscribing}
                     className={`gap-2 flex-1 ${isRecording ? 'animate-pulse' : ''}`}
                   >
-                    <Mic className="h-4 w-4" />
-                    {isRecording ? "Stop Recording" : "Record voice (your language)"}
+                    {isTranscribing ? (
+                      <>
+                        <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        Processing...
+                      </>
+                    ) : isRecording ? (
+                      <>
+                        <StopCircle className="h-4 w-4" />
+                        Stop Recording
+                      </>
+                    ) : (
+                      <>
+                        <Mic className="h-4 w-4" />
+                        Record voice (your language)
+                      </>
+                    )}
                   </Button>
                   {voiceFile && (
                     <Button
@@ -267,7 +353,7 @@ export default function CropScan() {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground italic">
-                  Voice will be auto-translated to English (backend)
+                  Speak in Tamil or Kannada - it will be transcribed automatically
                 </p>
 
                 {transcription && (
