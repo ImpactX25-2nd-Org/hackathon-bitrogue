@@ -1,0 +1,770 @@
+{
+  "chilli_anthracnose": {
+    "crop": "Chilli",
+    "disease_name": "Anthracnose",
+    "scientific_name": "Colletotrichum capsici",
+    "severity": "high",
+    "spread_rate": "fast",
+    "symptoms": [
+      "Circular sunken spots on fruits with concentric rings",
+      "Dark brown to black lesions on ripe peppers",
+      "Pink to orange spore masses in humid conditions",
+      "Premature fruit drop",
+      "Leaf spots with dark margins"
+    ],
+    "causes": [
+      "High humidity (>80%)",
+      "Warm temperatures (25-30°C)",
+      "Water splash from rain or irrigation",
+      "Infected seeds and plant debris"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove and destroy all infected fruits and leaves immediately",
+        "Stop overhead irrigation, water at base only",
+        "Improve air circulation by pruning dense foliage"
+      ],
+      "chemical": [
+        "Spray Carbendazim 50% WP @ 1g/L water",
+        "Apply Mancozeb 75% WP @ 2.5g/L as protective spray",
+        "Alternate between fungicides every 7-10 days, 3-4 applications"
+      ],
+      "organic": [
+        "Apply neem oil 0.3% spray every 5 days",
+        "Use Trichoderma viride @ 5g/L as bio-fungicide",
+        "Spray copper sulfate solution (2g/L)"
+      ]
+    },
+    "prevention": [
+      "Use disease-resistant varieties like Pusa Jwala",
+      "Treat seeds with hot water (50°C for 25 min)",
+      "Rotate crops with non-solanaceous crops for 2-3 years",
+      "Maintain 45cm x 60cm spacing"
+    ],
+    "cost_estimate": "₹400-800 per acre",
+    "timeline": "10-14 days for visible improvement",
+    "urgency": "high",
+    "yield_impact": "30-50% yield loss if untreated"
+  },
+
+  "chilli_healthy": {
+    "crop": "Chilli",
+    "disease_name": "Healthy Plant",
+    "severity": "none",
+    "symptoms": ["No visible disease symptoms", "Uniform green foliage"],
+    "treatment": {
+      "immediate": ["Continue regular monitoring", "Maintain current care practices"]
+    },
+    "prevention": ["Regular scouting", "Maintain field hygiene", "Proper irrigation"],
+    "cost_estimate": "₹0",
+    "urgency": "none"
+  },
+
+  "chilli_leafcurl": {
+    "crop": "Chilli",
+    "disease_name": "Leaf Curl Disease (Viral)",
+    "scientific_name": "Chilli Leaf Curl Virus",
+    "severity": "very high",
+    "spread_rate": "very fast",
+    "vector": "Whitefly (Bemisia tabaci)",
+    "symptoms": [
+      "Upward curling of leaves",
+      "Yellowing and mottling of leaves",
+      "Stunted plant growth",
+      "Reduced flowering and fruiting",
+      "Presence of whiteflies on leaf undersides"
+    ],
+    "causes": [
+      "Transmission by whitefly vectors",
+      "Infected seedlings",
+      "Hot and dry weather conditions"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove and destroy severely infected plants",
+        "Control whitefly vectors immediately",
+        "Isolate infected area to prevent spread"
+      ],
+      "chemical": [
+        "Spray Imidacloprid 17.8% SL @ 0.5ml/L for whitefly control",
+        "Apply Thiamethoxam 25% WG @ 0.3g/L every 10 days",
+        "4-5 sprays at 10-day intervals"
+      ],
+      "organic": [
+        "Spray neem oil 3% + soap solution weekly",
+        "Use yellow sticky traps @ 25-30 traps/acre",
+        "Apply neem cake to soil @ 250kg/acre"
+      ]
+    },
+    "prevention": [
+      "Use virus-free certified seeds",
+      "Raise seedlings in insect-proof nets",
+      "Plant marigold as border crop to repel whiteflies",
+      "Destroy crop residues after harvest"
+    ],
+    "cost_estimate": "₹600-1200 per acre",
+    "timeline": "Cannot cure virus, focus on preventing spread",
+    "urgency": "very high",
+    "yield_impact": "50-100% yield loss if untreated",
+    "note": "Viral disease - cannot be cured, only managed"
+  },
+
+  "chilli_leafspot": {
+    "crop": "Chilli",
+    "disease_name": "Leaf Spot",
+    "scientific_name": "Cercospora capsici",
+    "severity": "moderate",
+    "spread_rate": "medium",
+    "symptoms": [
+      "Small circular brown spots on leaves (2-10mm)",
+      "White to gray center with brown margins",
+      "Yellowing around spots",
+      "Premature leaf drop in severe cases"
+    ],
+    "causes": [
+      "High humidity (>70%)",
+      "Moderate temperatures (20-28°C)",
+      "Dense plant canopy",
+      "Overhead irrigation"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove infected leaves and destroy",
+        "Improve air circulation by spacing/pruning",
+        "Switch to drip or furrow irrigation"
+      ],
+      "chemical": [
+        "Spray Copper Oxychloride 50% WP @ 2.5g/L",
+        "Apply Mancozeb 75% WP @ 2g/L every 10 days",
+        "3-4 applications at 10-day intervals"
+      ],
+      "organic": [
+        "Spray Bordeaux mixture (1%) every 15 days",
+        "Apply neem cake @ 200kg/acre to soil",
+        "Use Trichoderma viride @ 5g/L water"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties like Bhut Jolokia",
+      "Maintain 45cm x 60cm spacing",
+      "Avoid nitrogen over-application",
+      "Crop rotation with non-host crops"
+    ],
+    "cost_estimate": "₹300-600 per acre",
+    "timeline": "7-10 days for improvement",
+    "urgency": "medium",
+    "yield_impact": "15-25% yield loss if severe"
+  },
+
+  "chilli_whitefly": {
+    "crop": "Chilli",
+    "disease_name": "Whitefly Infestation",
+    "scientific_name": "Bemisia tabaci",
+    "severity": "high",
+    "spread_rate": "very fast",
+    "symptoms": [
+      "Small white insects on leaf undersides",
+      "Sticky honeydew on leaves",
+      "Sooty mold (black coating) on leaves",
+      "Yellowing and curling of leaves",
+      "Can transmit leaf curl virus"
+    ],
+    "causes": [
+      "Hot and dry weather",
+      "Continuous monocropping",
+      "High nitrogen levels"
+    ],
+    "treatment": {
+      "immediate": [
+        "Install yellow sticky traps @ 25-30/acre",
+        "Spray water jets to dislodge whiteflies",
+        "Remove heavily infested leaves"
+      ],
+      "chemical": [
+        "Spray Imidacloprid 17.8% SL @ 0.5ml/L",
+        "Apply Thiamethoxam 25% WG @ 0.3g/L",
+        "3-4 sprays at 7-10 day intervals"
+      ],
+      "organic": [
+        "Spray neem oil 3% + soap solution (5ml/L)",
+        "Release Chrysoperla carnea (predator) @ 50,000/acre",
+        "Use reflective mulches (silver/aluminum)"
+      ]
+    },
+    "prevention": [
+      "Raise seedlings under insect-proof nets",
+      "Remove alternate host weeds",
+      "Plant marigold or basil as trap crops",
+      "Apply neem cake @ 250kg/acre at planting"
+    ],
+    "cost_estimate": "₹500-1000 per acre",
+    "timeline": "5-7 days to see population reduction",
+    "urgency": "high",
+    "yield_impact": "20-40% yield loss, 50-100% if transmits virus"
+  },
+
+  "chilli_yellowish": {
+    "crop": "Chilli",
+    "disease_name": "Yellowing/Chlorosis",
+    "severity": "moderate",
+    "spread_rate": "slow",
+    "symptoms": [
+      "General yellowing of leaves (chlorosis)",
+      "Yellow leaves with green veins",
+      "Stunted growth",
+      "Poor flowering and fruiting"
+    ],
+    "causes": [
+      "Nutrient deficiencies (Nitrogen, Iron, Magnesium)",
+      "Waterlogging or poor drainage",
+      "pH imbalance (too acidic or alkaline)",
+      "Root damage from nematodes"
+    ],
+    "treatment": {
+      "immediate": [
+        "Check soil moisture - adjust watering",
+        "Improve drainage if waterlogged",
+        "Check pH - should be 6.0-7.0 for chilli"
+      ],
+      "fertilizers": [
+        "Apply Urea @ 10-15g/plant if nitrogen deficient",
+        "Spray Iron sulfate (FeSO4) @ 2g/L for iron deficiency",
+        "Apply Magnesium sulfate @ 10g/plant for Mg deficiency",
+        "Use balanced NPK 19:19:19 @ 5g/L foliar spray"
+      ],
+      "organic": [
+        "Apply well-decomposed FYM @ 10 tons/acre",
+        "Foliar spray of seaweed extract @ 2ml/L",
+        "Apply wood ash @ 100kg/acre for potassium"
+      ]
+    },
+    "prevention": [
+      "Soil testing before planting",
+      "Balanced fertilization program",
+      "Proper irrigation management",
+      "Good drainage system"
+    ],
+    "cost_estimate": "₹200-500 per acre",
+    "timeline": "New growth shows improvement in 7-10 days",
+    "urgency": "medium",
+    "yield_impact": "10-30% depending on severity"
+  },
+
+  "groundnut_early_leaf_spot": {
+    "crop": "Groundnut",
+    "disease_name": "Early Leaf Spot",
+    "scientific_name": "Cercospora arachidicola",
+    "severity": "high",
+    "spread_rate": "medium",
+    "symptoms": [
+      "Small circular dark brown spots on upper leaf surface",
+      "Yellow halo around spots",
+      "Spots do NOT have concentric rings",
+      "Lower leaves affected first",
+      "Premature leaf drop"
+    ],
+    "causes": [
+      "High humidity (>80%)",
+      "Moderate temperatures (25-30°C)",
+      "Dense plant canopy",
+      "Overhead irrigation"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove severely infected lower leaves",
+        "Improve air circulation between rows",
+        "Switch to furrow irrigation"
+      ],
+      "chemical": [
+        "Spray Chlorothalonil 75% WP @ 2g/L",
+        "Apply Mancozeb 75% WP @ 2.5g/L",
+        "Start at 30-35 days after sowing, 4-5 sprays at 15-day intervals"
+      ],
+      "organic": [
+        "Spray Bordeaux mixture (1%)",
+        "Apply Trichoderma harzianum @ 5g/L",
+        "Use neem oil 0.3% spray"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: ICGV-91114, ICGS-76",
+      "Maintain 30cm x 10cm spacing",
+      "Crop rotation with cereals (2-3 years)",
+      "Balanced fertilization: 20:40:40 NPK kg/acre"
+    ],
+    "cost_estimate": "₹400-800 per acre",
+    "timeline": "14-21 days for visible improvement",
+    "urgency": "high",
+    "yield_impact": "25-50% yield loss if untreated"
+  },
+
+  "groundnut_early_rust": {
+    "crop": "Groundnut",
+    "disease_name": "Rust Disease",
+    "scientific_name": "Puccinia arachidis",
+    "severity": "very high",
+    "spread_rate": "very fast",
+    "symptoms": [
+      "Orange-brown pustules on both leaf surfaces",
+      "Rapid yellowing and leaf drop",
+      "Severe defoliation within 10-15 days",
+      "Can spread to entire field in 7-10 days"
+    ],
+    "causes": [
+      "High humidity (>80%)",
+      "Moderate temperatures (20-30°C)",
+      "Cloudy weather with intermittent rains",
+      "Wind-borne spores"
+    ],
+    "treatment": {
+      "immediate": [
+        "Start spraying immediately upon detection",
+        "Remove and destroy heavily infected plants",
+        "Do not delay - disease spreads very fast"
+      ],
+      "chemical": [
+        "Spray Hexaconazole 5% EC @ 1ml/L (MOST EFFECTIVE)",
+        "Apply Propiconazole 25% EC @ 1ml/L",
+        "3-4 sprays at 15-day intervals",
+        "Alternate fungicides to prevent resistance"
+      ],
+      "organic": [
+        "Spray sulfur 80% WP @ 2g/L",
+        "Apply neem oil 3% + garlic extract"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: ICGV-91114, ICGS-11",
+      "Sow early (before monsoon peak)",
+      "Maintain wider spacing (30cm x 15cm)",
+      "Prophylactic spray at 30-35 days after sowing"
+    ],
+    "cost_estimate": "₹500-1000 per acre",
+    "timeline": "7-10 days to control spread",
+    "urgency": "CRITICAL - IMMEDIATE ACTION REQUIRED",
+    "yield_impact": "50-70% yield loss if untreated",
+    "warning": "Most devastating disease of groundnut"
+  },
+
+  "groundnut_healthy": {
+    "crop": "Groundnut",
+    "disease_name": "Healthy Plant",
+    "severity": "none",
+    "symptoms": ["No visible disease symptoms", "Dark green healthy foliage"],
+    "treatment": {
+      "immediate": ["Continue monitoring"],
+      "preventive": [
+        "Prophylactic fungicide spray at 30-35 DAS",
+        "Balanced fertilization: 20:40:40 NPK kg/acre"
+      ]
+    },
+    "prevention": ["Weekly field inspection", "Maintain field hygiene"],
+    "cost_estimate": "₹0",
+    "urgency": "none"
+  },
+
+  "groundnut_late_leaf_spot": {
+    "crop": "Groundnut",
+    "disease_name": "Late Leaf Spot",
+    "scientific_name": "Phaeoisariopsis personata",
+    "severity": "high",
+    "spread_rate": "medium",
+    "symptoms": [
+      "Dark brown to black spots with CONCENTRIC RINGS (target pattern)",
+      "Yellow halo around lesions",
+      "Appears later in crop cycle (60-70 DAS)",
+      "Severe defoliation in later stages"
+    ],
+    "causes": [
+      "High humidity (>75%)",
+      "Warm temperatures (25-30°C)",
+      "Late rains during crop maturity",
+      "Dense canopy"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove infected leaves from lower canopy",
+        "Improve air flow between plants",
+        "Reduce irrigation frequency"
+      ],
+      "chemical": [
+        "Spray Chlorothalonil 75% WP @ 2g/L",
+        "Apply Carbendazim 50% WP @ 1g/L",
+        "Start at 50-60 days after sowing, 3-4 sprays at 15-day intervals"
+      ],
+      "organic": [
+        "Spray Bordeaux mixture (1%) every 15 days",
+        "Apply Trichoderma @ 5g/L"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: ICGV-00351, TAG-24",
+      "Early sowing (mid-May to mid-June)",
+      "Crop rotation with non-host crops",
+      "Balanced fertilization: 20:40:40 NPK kg/acre"
+    ],
+    "cost_estimate": "₹400-800 per acre",
+    "timeline": "14-21 days for improvement",
+    "urgency": "high",
+    "yield_impact": "30-40% yield loss if severe"
+  },
+
+  "groundnut_nutrition_deficiency": {
+    "crop": "Groundnut",
+    "disease_name": "Nutrient Deficiency",
+    "severity": "moderate",
+    "spread_rate": "slow",
+    "symptoms": [
+      "Yellowing of leaves (Nitrogen deficiency)",
+      "Purple/red discoloration (Phosphorus deficiency)",
+      "Leaf margin scorching (Potassium deficiency)",
+      "Stunted growth and poor pod development"
+    ],
+    "causes": [
+      "Imbalanced fertilization",
+      "Soil pH issues",
+      "Poor soil organic matter",
+      "Leaching due to heavy rains"
+    ],
+    "treatment": {
+      "nitrogen_deficiency": [
+        "Apply Urea @ 20kg/acre as side dressing",
+        "Foliar spray of 2% Urea solution"
+      ],
+      "phosphorus_deficiency": [
+        "Apply Single Super Phosphate @ 30kg/acre",
+        "Use DAP @ 20kg/acre at flowering"
+      ],
+      "potassium_deficiency": [
+        "Apply Muriate of Potash @ 20kg/acre",
+        "Foliar spray of 1% KCl solution"
+      ],
+      "micronutrient": [
+        "Spray micronutrient mixture @ 2g/L",
+        "Apply Iron sulfate @ 2g/L for Fe deficiency",
+        "Apply Zinc sulfate @ 2g/L for Zn deficiency"
+      ]
+    },
+    "prevention": [
+      "Soil testing before sowing",
+      "Balanced fertilization: 20:40:40 NPK kg/acre",
+      "Apply FYM @ 5 tons/acre before planting",
+      "Maintain soil pH 6.0-7.0"
+    ],
+    "cost_estimate": "₹300-700 per acre",
+    "timeline": "New leaves show improvement in 7-14 days",
+    "urgency": "medium",
+    "yield_impact": "20-40% depending on severity"
+  },
+
+  "groundnut_rust": {
+    "crop": "Groundnut",
+    "disease_name": "Rust Disease",
+    "scientific_name": "Puccinia arachidis",
+    "severity": "very high",
+    "spread_rate": "very fast",
+    "symptoms": [
+      "Orange-brown raised pustules on leaf undersides",
+      "Rapid yellowing and drying of leaves",
+      "Severe defoliation within 10-15 days",
+      "Can destroy entire crop in 2-3 weeks"
+    ],
+    "causes": [
+      "High relative humidity (>80%)",
+      "Moderate temperatures (22-28°C)",
+      "Prolonged cloudy weather",
+      "Wind-borne spore dispersal"
+    ],
+    "treatment": {
+      "immediate": [
+        "URGENT: Spray within 24-48 hours of detection",
+        "Remove and destroy heavily infected plants",
+        "Avoid irrigation for 3-4 days after spray"
+      ],
+      "chemical": [
+        "Hexaconazole 5% EC @ 1ml/L (MOST EFFECTIVE)",
+        "Propiconazole 25% EC @ 1ml/L",
+        "Minimum 3 sprays at 12-15 day intervals",
+        "Add sticker (0.1%) for better adhesion"
+      ],
+      "organic": [
+        "Spray sulfur 80% WP @ 2.5g/L",
+        "Apply Trichoderma viride @ 5g/L"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: ICGV-91114, Kadiri-6",
+      "Early sowing (before mid-June)",
+      "Wider spacing: 30cm x 15cm",
+      "Prophylactic spray at 35-40 days after sowing",
+      "Deep summer plowing to destroy residues"
+    ],
+    "cost_estimate": "₹600-1200 per acre",
+    "timeline": "7-10 days to arrest spread",
+    "urgency": "CRITICAL - EMERGENCY TREATMENT REQUIRED",
+    "yield_impact": "50-80% yield loss, can cause total crop failure",
+    "warning": "MOST SERIOUS disease of groundnut. DO NOT DELAY TREATMENT."
+  },
+
+  "rice_bacterial_blight": {
+    "crop": "Rice",
+    "disease_name": "Bacterial Blight",
+    "scientific_name": "Xanthomonas oryzae pv. oryzae",
+    "severity": "very high",
+    "spread_rate": "fast",
+    "symptoms": [
+      "Water-soaked lesions on leaf margins and tips",
+      "Lesions turn yellow to white with wavy margins",
+      "Kresek symptom: sudden wilting of young plants",
+      "Milky bacterial ooze on leaf surface (morning)"
+    ],
+    "causes": [
+      "Infected seeds and planting material",
+      "High humidity and heavy rainfall",
+      "Deep irrigation water (10-15cm)",
+      "Nitrogen over-application"
+    ],
+    "treatment": {
+      "immediate": [
+        "Drain excess water from field temporarily",
+        "Remove and destroy severely infected plants",
+        "Avoid nitrogen application temporarily"
+      ],
+      "chemical": [
+        "Spray Copper Hydroxide 77% WP @ 2g/L",
+        "Apply Streptocycline 200ppm + Copper oxychloride @ 2.5g/L",
+        "2-3 sprays at 10-day intervals"
+      ],
+      "organic": [
+        "Spray Pseudomonas fluorescens @ 5g/L",
+        "Apply Copper sulfate solution (2g/L)"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: Improved Pusa Basmati 1, Pusa 1121",
+      "Seed treatment with Streptocycline (200ppm) for 30 min",
+      "Use certified disease-free seeds",
+      "Maintain shallow irrigation (5-7cm)"
+    ],
+    "cost_estimate": "₹300-600 per acre",
+    "timeline": "10-14 days to control spread",
+    "urgency": "very high",
+    "yield_impact": "30-70% yield loss",
+    "note": "Bacterial disease - difficult to control once established"
+  },
+
+  "rice_blast": {
+    "crop": "Rice",
+    "disease_name": "Blast Disease",
+    "scientific_name": "Magnaporthe oryzae",
+    "severity": "very high",
+    "spread_rate": "very fast",
+    "symptoms": [
+      "Diamond-shaped lesions with gray/white centers and brown margins",
+      "Neck blast: Dark brown to black lesions on panicle base",
+      "Lesions coalesce to kill entire leaves",
+      "Neck rot causes complete panicle death (most damaging)"
+    ],
+    "causes": [
+      "Excess nitrogen fertilization",
+      "Prolonged leaf wetness",
+      "Dense planting or excess tillering",
+      "Temperature 20-30°C with high humidity"
+    ],
+    "treatment": {
+      "immediate": [
+        "Stop nitrogen application immediately",
+        "Apply potassium to strengthen plants",
+        "Spray urgently at first sign"
+      ],
+      "chemical": [
+        "Tricyclazole 75% WP @ 0.6g/L (BEST for leaf & neck blast)",
+        "Carbendazim 50% WP @ 1g/L",
+        "First spray at tillering, second at booting, third at heading if needed"
+      ],
+      "organic": [
+        "Spray Trichoderma viride @ 5g/L",
+        "Apply Pseudomonas fluorescens @ 5g/L"
+      ]
+    },
+    "prevention": [
+      "Use resistant varieties: Pusa Basmati 1121, Pusa 1509",
+      "Seed treatment with Tricyclazole @ 2g/kg",
+      "Balanced fertilization: Avoid excess nitrogen",
+      "Apply Silicon fertilizer @ 100kg/acre",
+      "Prophylactic spray at tillering and booting stages"
+    ],
+    "cost_estimate": "₹400-900 per acre",
+    "timeline": "7-10 days to arrest spread",
+    "urgency": "CRITICAL - especially at booting/heading stage",
+    "yield_impact": "30-90% yield loss. Neck blast can cause 100% loss",
+    "warning": "Neck blast at flowering/heading is MOST DAMAGING"
+  },
+
+  "rice_brown_spot": {
+    "crop": "Rice",
+    "disease_name": "Brown Spot",
+    "scientific_name": "Bipolaris oryzae",
+    "severity": "moderate to high",
+    "spread_rate": "medium",
+    "symptoms": [
+      "Small circular to oval brown spots on leaves",
+      "Spots have dark brown margins with light centers",
+      "Grain discoloration: brown/black spots reducing quality",
+      "Seedling blight in nursery"
+    ],
+    "causes": [
+      "Nutrient deficiency (especially N, K, Silicon)",
+      "Infected seeds",
+      "High humidity with moderate temperature",
+      "Drought stress"
+    ],
+    "treatment": {
+      "immediate": [
+        "Apply balanced fertilization",
+        "Ensure adequate soil moisture",
+        "Remove heavily infected plants"
+      ],
+      "chemical": [
+        "Spray Mancozeb 75% WP @ 2g/L",
+        "Apply Carbendazim 50% WP @ 1g/L",
+        "2-3 sprays at 10-12 day intervals"
+      ],
+      "fertilizer": [
+        "Apply Urea @ 10kg/acre if nitrogen deficient",
+        "Apply Muriate of Potash @ 10kg/acre",
+        "Foliar spray of Potassium Silicate @ 2g/L"
+      ],
+      "organic": [
+        "Spray Trichoderma harzianum @ 5g/L",
+        "Apply Pseudomonas fluorescens @ 5g/L"
+      ]
+    },
+    "prevention": [
+      "Use healthy, certified disease-free seeds",
+      "Seed treatment with Carbendazim @ 2g/kg",
+      "Balanced fertilization: NPK 60:30:30 kg/acre",
+      "Apply Silicon fertilizer @ 100kg/acre",
+      "Maintain optimal soil moisture"
+    ],
+    "cost_estimate": "₹300-600 per acre",
+    "timeline": "10-14 days for improvement",
+    "urgency": "medium to high",
+    "yield_impact": "20-40% yield loss, also reduces grain quality",
+    "note": "Often called 'hunger disease' due to nutrient deficiency link"
+  },
+
+  "rice_healthy": {
+    "crop": "Rice",
+    "disease_name": "Healthy Plant",
+    "severity": "none",
+    "symptoms": ["No visible disease symptoms", "Uniform green color"],
+    "treatment": {
+      "immediate": ["Continue monitoring"],
+      "preventive": [
+        "Prophylactic fungicide spray at tillering",
+        "Balanced fertilization: NPK 60:30:30 kg/acre",
+        "Monitor for blast at booting stage"
+      ]
+    },
+    "prevention": ["Regular field inspection", "Proper irrigation"],
+    "cost_estimate": "₹0",
+    "urgency": "none"
+  },
+
+  "rice_leaf_scald": {
+    "crop": "Rice",
+    "disease_name": "Leaf Scald",
+    "scientific_name": "Microdochium oryzae",
+    "severity": "moderate",
+    "spread_rate": "medium",
+    "symptoms": [
+      "Large oval to irregular lesions on leaves",
+      "Lesions have zonate patterns (alternating light and dark bands)",
+      "Lesions start at leaf tips and extend downward",
+      "Straw-colored to light brown lesions with dark borders"
+    ],
+    "causes": [
+      "Cool temperatures (15-25°C)",
+      "High humidity and prolonged leaf wetness",
+      "Excess nitrogen fertilization",
+      "Dense planting"
+    ],
+    "treatment": {
+      "immediate": [
+        "Remove heavily infected leaves",
+        "Reduce nitrogen application",
+        "Improve air circulation"
+      ],
+      "chemical": [
+        "Spray Propiconazole 25% EC @ 1ml/L",
+        "Apply Mancozeb 75% WP @ 2g/L",
+        "2-3 sprays at 10-day intervals"
+      ],
+      "organic": [
+        "Spray Trichoderma viride @ 5g/L",
+        "Apply neem oil 0.3%"
+      ]
+    },
+    "prevention": [
+      "Use disease-free certified seeds",
+      "Seed treatment with Carbendazim @ 2g/kg",
+      "Balanced fertilization, avoid excess nitrogen",
+      "Proper spacing: 20cm x 15cm"
+    ],
+    "cost_estimate": "₹300-600 per acre",
+    "timeline": "10-14 days for improvement",
+    "urgency": "medium",
+    "yield_impact": "15-30% yield loss if severe"
+  },
+
+  "rice_sheath_blight": {
+    "crop": "Rice",
+    "disease_name": "Sheath Blight",
+    "scientific_name": "Rhizoctonia solani",
+    "severity": "high",
+    "spread_rate": "fast",
+    "symptoms": [
+      "Oval to irregular greenish-gray lesions on leaf sheaths near water line",
+      "Lesions develop white to grayish-white centers",
+      "Dark brown to reddish-brown borders",
+      "Lesions progress upward from water level",
+      "White fungal growth in lesion centers"
+    ],
+    "causes": [
+      "High humidity and temperature (28-32°C)",
+      "Dense planting or excess tillering",
+      "High nitrogen application",
+      "Deep flooding (>10cm water)"
+    ],
+    "treatment": {
+      "immediate": [
+        "Drain field temporarily to reduce humidity",
+        "Remove heavily infected tillers",
+        "Stop nitrogen application temporarily"
+      ],
+      "chemical": [
+        "Spray Validamycin 3% L @ 2ml/L (MOST EFFECTIVE)",
+        "Apply Hexaconazole 5% EC @ 1ml/L",
+        "First spray at early tillering, second 10-15 days later",
+        "Ensure spray reaches lower leaf sheaths"
+      ],
+      "organic": [
+        "Apply Trichoderma viride @ 5g/L",
+        "Use Pseudomonas fluorescens @ 5g/L"
+      ]
+    },
+    "prevention": [
+      "Use moderate nitrogen: split into 3-4 doses",
+      "Apply Silicon fertilizer @ 100kg/acre",
+      "Maintain proper spacing: 20cm x 15cm",
+      "Avoid deep flooding: keep water level 5-7cm",
+      "Remove crop residues after harvest"
+    ],
+    "cost_estimate": "₹400-800 per acre",
+    "timeline": "10-14 days to control spread",
+    "urgency": "high",
+    "yield_impact": "25-50% yield loss in severe cases",
+    "note": "Common in high-yielding varieties with dense canopy"
+  }
+}

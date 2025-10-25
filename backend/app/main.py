@@ -11,8 +11,12 @@ import logging
 
 from app.config import settings
 from app.database import connect_to_mongo, close_mongo_connection
-from app.routes import auth, scans, community, suggestions, notifications
+from app.routes import auth, scans, community, suggestions, notifications, language
 from app.services import ml_service
+from app.services.rag_service import RAGService
+from app.services.llm_service import LLMService
+from app.services.translation_service import TranslationService
+from app.services.audio_service import AudioService
 
 # Configure logging
 logging.basicConfig(
@@ -42,6 +46,44 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"⚠️  Failed to initialize ML service: {str(e)}")
         logger.warning("⚠️  Disease detection will not be available")
+    
+    # Initialize RAG Service
+    try:
+        logger.info("📚 Loading RAG Knowledge Base...")
+        scans.rag_service = RAGService()
+        logger.info("✅ RAG Service initialized successfully")
+    except Exception as e:
+        logger.error(f"⚠️  Failed to initialize RAG service: {str(e)}")
+        logger.warning("⚠️  RAG knowledge base will not be available")
+    
+    # Initialize LLM Service
+    try:
+        logger.info("🧠 Initializing LLM Service (OpenRouter)...")
+        scans.llm_service = LLMService()
+        logger.info("✅ LLM Service initialized successfully")
+    except Exception as e:
+        logger.error(f"⚠️  Failed to initialize LLM service: {str(e)}")
+        logger.warning("⚠️  AI-powered treatment advice will not be available")
+    
+    # Initialize Translation Service
+    try:
+        logger.info("🌐 Initializing Translation Service (IndicTrans2)...")
+        from app.services import translation_service
+        translation_service.translation_service = TranslationService()
+        logger.info("✅ Translation Service initialized successfully")
+    except Exception as e:
+        logger.error(f"⚠️  Failed to initialize Translation service: {str(e)}")
+        logger.warning("⚠️  Multi-language support will not be available")
+    
+    # Initialize Audio Service
+    try:
+        logger.info("🎤 Initializing Audio Service (Whisper)...")
+        from app.services import audio_service
+        audio_service.audio_service = AudioService(model_size="base")
+        logger.info("✅ Audio Service initialized successfully")
+    except Exception as e:
+        logger.error(f"⚠️  Failed to initialize Audio service: {str(e)}")
+        logger.warning("⚠️  Audio transcription will not be available")
     
     logger.info("=" * 60)
     print("✓ Application startup complete")
@@ -114,6 +156,7 @@ app.include_router(scans.router, prefix="/api")
 app.include_router(community.router, prefix="/api")
 app.include_router(suggestions.router, prefix="/api")
 app.include_router(notifications.router, prefix="/api")
+app.include_router(language.router, prefix="/api")
 
 
 # Global exception handler

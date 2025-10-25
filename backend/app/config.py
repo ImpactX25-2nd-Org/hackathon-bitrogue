@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     
+    # OpenRouter API Configuration (for AI-powered treatment advice)
+    OPENROUTER_API_KEY: Optional[str] = None
+    
     class Config:
         env_file = ".env"
         case_sensitive = True

@@ -39,6 +39,7 @@ const Index = () => {
       console.log('🔍 URL:', window.location.href);
       console.log('🔍 Search Params:', window.location.search);
       console.log('🔍 ScanId from params:', scanId);
+      console.log('🌐 Current Language:', currentLanguage);
       
       try {
         setIsLoading(true);
@@ -46,36 +47,38 @@ const Index = () => {
         
         if (scanId) {
           // Load specific scan
-          console.log('📍 Loading scan by ID:', scanId);
-          const response = await getScanById(scanId);
+          console.log('📍 Loading scan by ID:', scanId, 'with language:', currentLanguage);
+          const response = await getScanById(scanId, currentLanguage);
+          console.log('✓ Got scan response:', response);
           
           if (response.success && response.data) {
             setDiseaseData({
-              diseaseName: response.data.diseaseName || "Unknown Disease",
+              diseaseName: response.data.disease_name_translated || response.data.diseaseName || "Unknown Disease",
               reliability: response.data.reliability || 0,
               timestamp: response.data.timestamp,
               nextSteps: response.data.nextSteps || [],
               communityAdvice: response.data.communityAdvice || [],
               isCommon: response.data.isCommon || true,
             });
-            console.log('✅ Loaded scan data:', response.data.diseaseName);
+            console.log('✅ Loaded scan data:', response.data.diseaseName, '(Translated:', response.data.disease_name_translated, ')');
           }
         } else {
           // Load user's latest scan
-          console.log('📍 Loading user\'s latest scan');
-          const response = await getUserScans(0, 1);
+          console.log('📍 Loading user\'s latest scan with language:', currentLanguage);
+          const response = await getUserScans(0, 1, currentLanguage);
+          console.log('✓ Got user scans response:', response);
           
           if (response.success && response.data.scans.length > 0) {
             const latestScan = response.data.scans[0];
             setDiseaseData({
-              diseaseName: latestScan.disease_name || "Unknown Disease",
+              diseaseName: latestScan.disease_name_translated || latestScan.disease_name || "Unknown Disease",
               reliability: latestScan.reliability || 0,
               timestamp: latestScan.created_at,
               nextSteps: latestScan.next_steps || [],
               communityAdvice: [],
               isCommon: latestScan.is_common || true,
             });
-            console.log('✅ Loaded latest scan:', latestScan.disease_name);
+            console.log('✅ Loaded latest scan:', latestScan.disease_name, '(Translated:', latestScan.disease_name_translated, ')');
           } else {
             // No scans yet, show mock data
             console.log('📝 No scans found, using mock data');

@@ -12,6 +12,7 @@ class UserBase(BaseModel):
     email: EmailStr
     name: str = Field(..., min_length=1, max_length=255)
     phone: Optional[str] = Field(None, max_length=20)
+    location: Optional[str] = Field(None, max_length=100, description="City, State or Village name")
     language: str = Field(default="en", pattern="^(en|ta|mr|kn|hi|te)$")
     role: Literal["farmer", "expert", "extension_worker", "admin"] = "farmer"
 
@@ -47,6 +48,7 @@ class UserInDB(UserBase):
                 "email": "farmer@example.com",
                 "name": "Ramesh Kumar",
                 "phone": "9876543210",
+                "location": "Pune, Maharashtra",
                 "language": "en",
                 "role": "farmer",
                 "trust_score": 75.0,
@@ -61,6 +63,7 @@ class UserResponse(BaseModel):
     email: str
     name: str
     phone: Optional[str] = None
+    location: Optional[str] = None
     language: str
     role: str
     trust_score: float
@@ -77,6 +80,7 @@ class UserUpdate(BaseModel):
     """Model for updating user profile"""
     name: Optional[str] = None
     phone: Optional[str] = None
+    location: Optional[str] = None
     language: Optional[str] = None
     avatar_url: Optional[str] = None
 

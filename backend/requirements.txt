@@ -19,3 +19,14 @@ torchvision==0.15.0
 timm==0.9.12
 pillow==10.0.0
 numpy==1.26.4
+
+# LLM & RAG Dependencies
+openai==1.12.0
+requests==2.31.0
+
+# Translation & Audio Dependencies
+transformers>=4.40.0
+IndicTransToolkit==1.0.3
+sentencepiece==0.1.99
+openai-whisper==20231117
+ffmpeg-python==0.2.0

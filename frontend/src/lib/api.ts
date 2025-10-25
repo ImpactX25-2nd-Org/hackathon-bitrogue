@@ -122,8 +122,8 @@ export async function createScan(data: ScanData) {
   return handleResponse(response);
 }
 
-export async function getUserScans(skip = 0, limit = 10) {
-  const response = await fetch(`${API_BASE_URL}/scans?skip=${skip}&limit=${limit}`, {
+export async function getUserScans(skip = 0, limit = 10, language = 'en') {
+  const response = await fetch(`${API_BASE_URL}/scans?skip=${skip}&limit=${limit}&language=${language}`, {
     method: 'GET',
     headers: getAuthHeaders(),
   });
@@ -131,8 +131,8 @@ export async function getUserScans(skip = 0, limit = 10) {
   return handleResponse(response);
 }
 
-export async function getScanById(scanId: string) {
-  const response = await fetch(`${API_BASE_URL}/scans/${scanId}`, {
+export async function getScanById(scanId: string, language = 'en') {
+  const response = await fetch(`${API_BASE_URL}/scans/${scanId}?language=${language}`, {
     method: 'GET',
     headers: getAuthHeaders(),
   });
@@ -142,8 +142,8 @@ export async function getScanById(scanId: string) {
 
 // ==================== COMMUNITY SCAN APIs ====================
 
-export async function getCommunityScans(skip = 0, limit = 20, cropType?: string, diseaseName?: string) {
-  let url = `${API_BASE_URL}/scans/community/feed?skip=${skip}&limit=${limit}`;
+export async function getCommunityScans(skip = 0, limit = 20, cropType?: string, diseaseName?: string, language = 'en') {
+  let url = `${API_BASE_URL}/scans/community/feed?skip=${skip}&limit=${limit}&language=${language}`;
   if (cropType) url += `&crop_type=${cropType}`;
   if (diseaseName) url += `&disease_name=${diseaseName}`;
   

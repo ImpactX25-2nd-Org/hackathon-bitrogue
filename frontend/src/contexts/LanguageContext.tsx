@@ -1,18 +1,17 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useTranslation as useI18n } from "../lib/translations";
 
 export const languages = [
   { code: "en", name: "English", nativeName: "English" },
   { code: "ta", name: "Tamil", nativeName: "தமிழ்" },
-  { code: "mr", name: "Marathi", nativeName: "मराठी" },
   { code: "kn", name: "Kannada", nativeName: "ಕನ್ನಡ" },
-  { code: "hi", name: "Hindi", nativeName: "हिन्दी" },
-  { code: "te", name: "Telugu", nativeName: "తెలుగు" },
 ];
 
 interface LanguageContextType {
   currentLanguage: string;
   setLanguage: (code: string) => void;
   getLanguageName: (code: string) => string;
+  t: (key: string) => string; // Translation function
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -22,6 +21,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     // Initialize from localStorage or default to English
     return localStorage.getItem("preferredLanguage") || "en";
   });
+
+  // Translation function
+  const { t } = useI18n(currentLanguage);
 
   const setLanguage = (code: string) => {
     setCurrentLanguage(code);
@@ -48,7 +50,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, setLanguage, getLanguageName }}>
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage, getLanguageName, t }}>
       {children}
     </LanguageContext.Provider>
   );
