@@ -27,8 +27,16 @@ export interface DetectionResult {
   reliability: number;
   nextSteps: string[];
   isCommon: boolean;
-  communityAdvice?: any[];
+  communityAdvice?: CommunityAdvice[];
   timestamp?: string; // When the scan was performed
+}
+
+export interface CommunityAdvice {
+  farmerName: string;
+  farmerLocation?: string;
+  advice: string;
+  helpfulCount: number;
+  timestamp: string;
 }
 
 export interface Suggestion {
@@ -109,7 +117,8 @@ export const onSendForDetection = async (payload: ScanPayload): Promise<Detectio
         reliability: result.data.confidence,
         nextSteps: [], // Will be populated from backend later
         isCommon: true,
-        timestamp: new Date().toISOString(), // Add timestamp
+        timestamp: new Date().toISOString(),
+        communityAdvice: result.data.community_advice || [], // Community solutions
       };
     } else {
       throw new Error(result.message || 'Detection failed');

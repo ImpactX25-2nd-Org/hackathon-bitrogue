@@ -36,13 +36,17 @@ const Index = () => {
     const loadScanData = async () => {
       const scanId = searchParams.get('scanId');
       
+      console.log('🔍 URL:', window.location.href);
+      console.log('🔍 Search Params:', window.location.search);
+      console.log('🔍 ScanId from params:', scanId);
+      
       try {
         setIsLoading(true);
         console.log('📊 Loading scan data from backend...');
         
         if (scanId) {
           // Load specific scan
-          console.log('� Loading scan by ID:', scanId);
+          console.log('📍 Loading scan by ID:', scanId);
           const response = await getScanById(scanId);
           
           if (response.success && response.data) {

@@ -14,11 +14,9 @@ interface DiseaseDetectionResultProps {
   nextSteps: string[];
   communityAdvice?: Array<{
     farmerName: string;
-    farmerAvatar?: string;
-    trustScore: number;
+    farmerLocation?: string;
     advice: string;
     helpfulCount: number;
-    responseCount: number;
     timestamp: string;
   }>;
   isCommon: boolean;
@@ -142,9 +140,11 @@ export const DiseaseDetectionResult = ({
           className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-250"
         >
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-semibold text-foreground">Community Advice</h3>
+            <h3 className="text-xl font-semibold text-foreground">
+              💡 Community Solutions
+            </h3>
             <span className="text-sm text-muted-foreground">
-              ({communityAdvice.length} farmers shared their experience)
+              ({communityAdvice.length} {communityAdvice.length === 1 ? 'farmer' : 'farmers'} shared proven solutions)
             </span>
             {/* Show warning badge if low confidence */}
             {reliability <= 25 && (
@@ -155,7 +155,20 @@ export const DiseaseDetectionResult = ({
           </div>
           <div className="space-y-4">
             {communityAdvice.map((advice, index) => (
-              <CommunityAdviceCard key={index} {...advice} />
+              <CommunityAdviceCard 
+                key={index} 
+                farmerName={advice.farmerName}
+                farmerLocation={advice.farmerLocation}
+                trustScore={Math.min(95, 60 + (advice.helpfulCount * 5))} // Calculate trust score from helpful count
+                advice={advice.advice}
+                helpfulCount={advice.helpfulCount}
+                responseCount={0} // Not available yet
+                timestamp={new Date(advice.timestamp).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                })}
+              />
             ))}
           </div>
         </div>

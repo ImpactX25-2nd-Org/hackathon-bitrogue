@@ -98,6 +98,53 @@ async def create_scan(
         
         logger.info(f"✓ Scan completed: {prediction['disease']} ({prediction['confidence']:.2f}%)")
         
+        # Fetch high-trust community advice for this disease
+        community_advice = []
+        disease_name = prediction["disease"]
+        
+        # Find helpful advice from other farmers who dealt with same disease
+        pipeline = [
+            {
+                "$match": {
+                    "disease_name": disease_name,
+                    "status": "completed"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "comments",
+                    "localField": "id",
+                    "foreignField": "scan_id",
+                    "as": "comments"
+                }
+            },
+            {"$unwind": "$comments"},
+            {
+                "$match": {
+                    "comments.helpful_count": {"$gte": 2}  # Lower threshold for initial scan
+                }
+            },
+            {"$sort": {"comments.helpful_count": -1}},
+            {"$limit": 3},  # Top 3 most helpful
+            {
+                "$project": {
+                    "_id": 0,
+                    "farmerName": "$comments.user_name",
+                    "farmerLocation": "$comments.user_location",
+                    "advice": "$comments.advice",
+                    "helpfulCount": "$comments.helpful_count",
+                    "timestamp": "$comments.created_at"
+                }
+            }
+        ]
+        
+        try:
+            cursor = db.scans.aggregate(pipeline)
+            community_advice = await cursor.to_list(length=3)
+            logger.info(f"Found {len(community_advice)} community solutions for {disease_name}")
+        except Exception as e:
+            logger.warning(f"Could not fetch community advice: {str(e)}")
+        
         return {
             "success": True,
             "data": {
@@ -108,7 +155,8 @@ async def create_scan(
                 "all_predictions": prediction["all_predictions"],
                 "image_url": f"/uploads/{image_url}",
                 "timestamp": scan.created_at.isoformat(),
-                "status": "completed"
+                "status": "completed",
+                "community_advice": community_advice  # Add community solutions
             },
             "message": f"Disease detected: {prediction['disease']}"
         }
@@ -144,6 +192,11 @@ async def get_user_scans(
         cursor = db.scans.find({"user_id": current_user.id}).sort("created_at", -1).skip(skip).limit(limit)
         scans = await cursor.to_list(length=limit)
         
+        # Convert ObjectId to string for JSON serialization
+        for scan in scans:
+            if "_id" in scan:
+                scan["_id"] = str(scan["_id"])
+        
         return {
             "success": True,
             "data": {
@@ -168,7 +221,7 @@ async def get_scan_details(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
-    Get detailed information about a specific scan
+    Get detailed information about a specific scan with community advice for the detected disease
     
     - **scan_id**: Scan ID
     """
@@ -188,6 +241,60 @@ async def get_scan_details(
                 detail="Access denied"
             )
         
+        # Fetch high-trust community advice for this disease
+        community_advice = []
+        disease_name = scan.get("disease_name")
+        
+        if disease_name:
+            # Find other scans with the same disease that have helpful comments
+            # Get comments from scans with same disease, sorted by helpful_count
+            pipeline = [
+                # Find scans with same disease
+                {
+                    "$match": {
+                        "disease_name": disease_name,
+                        "status": "completed"
+                    }
+                },
+                # Lookup comments for these scans
+                {
+                    "$lookup": {
+                        "from": "comments",
+                        "localField": "id",
+                        "foreignField": "scan_id",
+                        "as": "comments"
+                    }
+                },
+                # Unwind comments
+                {"$unwind": "$comments"},
+                # Filter for helpful comments (at least 3 helpful votes)
+                {
+                    "$match": {
+                        "comments.helpful_count": {"$gte": 3}
+                    }
+                },
+                # Sort by helpful count
+                {"$sort": {"comments.helpful_count": -1}},
+                # Limit to top 5 most helpful
+                {"$limit": 5},
+                # Project only needed fields
+                {
+                    "$project": {
+                        "_id": 0,
+                        "farmerName": "$comments.user_name",
+                        "farmerLocation": "$comments.user_location",
+                        "advice": "$comments.advice",
+                        "helpfulCount": "$comments.helpful_count",
+                        "timestamp": "$comments.created_at"
+                    }
+                }
+            ]
+            
+            cursor = db.scans.aggregate(pipeline)
+            community_advice = await cursor.to_list(length=5)
+            
+            logger.info(f"Found {len(community_advice)} high-trust community advice for {disease_name}")
+        
         # Format response to match frontend expectations
         result = DetectionResult(
             scanId=scan["id"],
@@ -199,7 +306,7 @@ async def get_scan_details(
             imageUrl=scan["image_url"],
             cropName=scan["crop_name"],
             description=scan["description"],
-            communityAdvice=[]  # TODO: Fetch community advice for this disease
+            communityAdvice=community_advice
         )
         
         return {

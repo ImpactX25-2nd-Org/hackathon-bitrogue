@@ -80,14 +80,28 @@ class DiseaseDetectionService:
                 # Load state dict
                 try:
                     state_dict = torch.load(model_file, map_location=self.device)
+                    
+                    # Check if state_dict has 'backbone.' prefix (trained with wrapper)
+                    if any(key.startswith('backbone.') for key in state_dict.keys()):
+                        logger.info(f"🔧 Detected 'backbone.' prefix in {crop} model, stripping prefix...")
+                        # Remove 'backbone.' prefix from all keys
+                        new_state_dict = {}
+                        for key, value in state_dict.items():
+                            if key.startswith('backbone.'):
+                                new_key = key.replace('backbone.', '', 1)
+                                new_state_dict[new_key] = value
+                            else:
+                                new_state_dict[key] = value
+                        state_dict = new_state_dict
+                    
                     model.load_state_dict(state_dict)
                     logger.info(f"✓ Loaded {crop} model from {model_file}")
                 except Exception as e:
                     logger.error(f"❌ Failed to load {crop} model weights: {str(e)}")
-                    # Try loading with strict=False
+                    # Try loading with strict=False as fallback
                     try:
                         model.load_state_dict(state_dict, strict=False)
-                        logger.warning(f"⚠️  Loaded {crop} model with strict=False")
+                        logger.warning(f"⚠️  Loaded {crop} model with strict=False - MODEL MAY NOT WORK PROPERLY")
                     except:
                         logger.error(f"❌ Could not load {crop} model even with strict=False")
                         continue
@@ -182,6 +196,10 @@ class DiseaseDetectionService:
                 
                 # Get all predictions
                 all_probs = probabilities[0].cpu().numpy()
+                
+                # DEBUG: Log all class probabilities to detect if model is stuck
+                logger.debug(f"🔬 RAW OUTPUTS: {outputs[0].cpu().numpy()}")
+                logger.debug(f"🔬 ALL PROBABILITIES: {all_probs}")
                 
             # Get class names
             class_names = self.class_names[crop_type]

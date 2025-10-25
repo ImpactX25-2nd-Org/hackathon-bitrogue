@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 interface CommunityAdviceCardProps {
   farmerName: string;
   farmerAvatar?: string;
+  farmerLocation?: string;
   trustScore: number;
   advice: string;
   helpfulCount: number;
@@ -17,6 +18,7 @@ interface CommunityAdviceCardProps {
 export const CommunityAdviceCard = ({
   farmerName,
   farmerAvatar,
+  farmerLocation,
   trustScore,
   advice,
   helpfulCount,
@@ -37,7 +39,10 @@ export const CommunityAdviceCard = ({
             <h4 className="font-semibold text-foreground">{farmerName}</h4>
             <TrustBadge score={trustScore} size="sm" />
           </div>
-          <p className="text-xs text-muted-foreground">{timestamp}</p>
+          <p className="text-xs text-muted-foreground">
+            {farmerLocation && <span>{farmerLocation} • </span>}
+            {timestamp}
+          </p>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
