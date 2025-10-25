@@ -27,7 +27,7 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   const [isSolutionPageOpen, setIsSolutionPageOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState("detection");
-  const { currentLanguage, setLanguage } = useLanguage();
+  const { currentLanguage, setLanguage, t } = useLanguage();
   const [diseaseData, setDiseaseData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -191,7 +191,7 @@ const Index = () => {
                 className="gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Login
+                {t("Back to Login")}
               </Button>
               
               <Tooltip>
@@ -206,7 +206,7 @@ const Index = () => {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Logout</p>
+                  <p>{t("Logout")}</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -219,11 +219,11 @@ const Index = () => {
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
             <TabsTrigger value="detection" className="gap-2">
               <Sprout className="h-4 w-4" />
-              Disease Detection
+              {t("Disease Detection")}
             </TabsTrigger>
             <TabsTrigger value="community" className="gap-2">
               <Users className="h-4 w-4" />
-              Community Dashboard
+              {t("Community Dashboard")}
             </TabsTrigger>
           </TabsList>
           
@@ -258,11 +258,11 @@ const Index = () => {
                   className="gap-2"
                 >
                   <Camera className="h-4 w-4" />
-                  Scan New Crop
+                  {t("Scan New Crop")}
                 </Button>
                 {diseaseData?.timestamp && (
                   <p className="text-xs text-muted-foreground">
-                    Last scan: {new Date(diseaseData.timestamp).toLocaleString()}
+                    {t("Last scan")}: {new Date(diseaseData.timestamp).toLocaleString()}
                   </p>
                 )}
               </div>

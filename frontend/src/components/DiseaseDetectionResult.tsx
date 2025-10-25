@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { playTranslatedMessage, shareToCommunity } from "@/lib/api-placeholders";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DiseaseDetectionResultProps {
   diseaseName: string;
@@ -30,6 +31,7 @@ export const DiseaseDetectionResult = ({
   isCommon,
 }: DiseaseDetectionResultProps) => {
   const [isSharing, setIsSharing] = useState(false);
+  const { t } = useLanguage();
 
   const handlePlayMessage = async () => {
     try {
@@ -103,13 +105,13 @@ export const DiseaseDetectionResult = ({
               disabled={isSharing}
             >
               <Share2 className="h-4 w-4" />
-              Share to Community
+              {t("Share to Community")}
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <h3 className="font-semibold text-foreground mb-3">Suggested Next Steps:</h3>
+            <h3 className="font-semibold text-foreground mb-3">{t("Suggested Next Steps")}:</h3>
             <ul className="space-y-2">
               {nextSteps.map((step, index) => (
                 <li key={index} className="flex gap-3 text-sm">
@@ -129,7 +131,7 @@ export const DiseaseDetectionResult = ({
             onClick={handlePlayMessage}
           >
             <Volume2 className="h-4 w-4" />
-            Play message (your language)
+            {t("Play Message")} {t("(your language)")}
           </Button>
         </CardContent>
       </Card>
